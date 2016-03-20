@@ -1,6 +1,8 @@
 /**
  * Created by ::  llama ::  3/15/16.
  * For :: WeinFilder
+ *
+ * Good tautorial :: https://www.youtube.com/watch?v=G4jMzEGMKfg
  */
 
 import java.awt.*;
