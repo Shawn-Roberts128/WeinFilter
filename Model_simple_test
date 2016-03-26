@@ -1,0 +1,18 @@
+clc; clear all; clf; close all;
+
+B_z = 10;
+E_y = 10;
+q = 1;
+m = 1; 
+
+A_x =@(t) (( q/m ).*B_z * Vel_y );
+A_y =@(t) (( q/m ).*B_z * Vel_x + E_y );
+time = ( 0 : 1000 ) 
+
+pos = zeros( 3 ,3 ,1000 );
+vel = zeros( 3 ,3 ,1000 ); 
+acceleration = zeros( 3 ,3 ,1000 ); 
+
+for time
+
+end 
