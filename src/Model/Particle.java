@@ -9,17 +9,26 @@ package Model;
  */
 public class Particle {
 
-    private Cord position;
-    private Cord velocity;
-    private Cord acceleration;
+    protected Cord position;
+    protected Cord velocity;
+    protected Cord acceleration;
 
-    int t;
+    float mass;
 
 
-    public Particle( Cord position, Cord velocity,Cord acceleration) {
+    public Particle( Cord position, Cord velocity,Cord acceleration, float mass) {
         this.position = position;
         this.velocity = velocity;
         this.acceleration = acceleration;
-        this .t = 0;
+        this.mass = mass;
+    }
+
+    public Particle( Particle from ) {
+
+        this.position = new Cord (from.position);
+        this.velocity = new Cord (from.velocity);
+        this.acceleration = new Cord ( from.acceleration);
+        this.mass = from. mass;
+
     }
 }

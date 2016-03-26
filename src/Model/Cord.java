@@ -27,6 +27,17 @@ public class Cord {
         this.z = z;
     }
 
+    /** Copy Constructor
+     *
+     * @param from to copy
+     */
+    public Cord( Cord from ) {
+        this.x = from.x;
+        this.y = from.y;
+        this.z = from.z;
+    }
+
+
     /** cross preforms a cross product on the arguments like A x B -> A.cross(B)
      *  out = (  A_y*B_z - A_z*B_y  ) _x
      *      + ( - A_x*B_z + A_z*B_x ) _y
@@ -41,7 +52,7 @@ public class Cord {
 
     /**Adds two Cords
      *
-     * @param b
+     * @param b the input cord
      * @return an addition of the two Cords
      */
     public Cord add ( Cord b ){
