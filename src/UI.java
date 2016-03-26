@@ -6,6 +6,9 @@
  */
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 public class UI extends JFrame {
@@ -35,6 +38,25 @@ public class UI extends JFrame {
     // init the starts imitation of the window
     private void initUI(){
 
+        JMenu menu = new JMenu("Menu");
+        JMenuItem item = new JMenuItem("Quit");
+        item.setMnemonic(KeyEvent.VK_Q);
+        item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println();
+                UI.this.setVisible(false);
+                UI.this.dispose();
+            }
+        });
+        menu.add(item);
+
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(menu);
+        setJMenuBar( menuBar );
+        this.getContentPane().add(menuBar);
+//        this.getContentPane().add(x);
+
         this.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
         JLabel label = new JLabel(" What up");
@@ -44,9 +66,6 @@ public class UI extends JFrame {
 
         this.getContentPane().add(label);
         this.getContentPane().add(clickMe);
-//        this.getContentPane().add(x);
-
-
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Container c = this.getContentPane();
@@ -57,7 +76,6 @@ public class UI extends JFrame {
         this.setSize(screenSize.width/2, screenSize.height/2);
         this.setLocationRelativeTo(null);
     }
-
 
 }
 
