@@ -4,7 +4,7 @@ package Model;
  * Created by ::  llama ::  3/26/16.
  * For :: WienFilter
  *
- *  TODO add documentation for functions
+ *
  *
  */
 public class WeinFilter {
@@ -96,14 +96,23 @@ public class WeinFilter {
      *
      * @throws Initialised
      */
-    private void setConsts() throws Initialised { // TODO finish
+    private void setConsts() throws Initialised {
         if ( (fleck == null)||( initiatlisation )) throw new Initialised( " Constants not initialised " );
 
-        // set c1
-        // set c2
-        // set c3
-        // set c4
         // set w
+        this.w = fleck.charge * this.magnetic / this.electric ;
+
+        // set c1
+        this.c1 = -(this.fleck.velocity.z / w) ;
+
+        // set c2
+        this.c2 = ( this.fleck.velocity.y - (this.electric / this.magnetic ))/this.w;
+
+        // set c3
+        this.c3 = this.fleck.position.y-c1;
+
+        // set c4
+        this.c4 = this.fleck.position.z-c2;
 
         initiatlisation = true;
     }
@@ -117,7 +126,9 @@ public class WeinFilter {
     private double yCycloid ( double time) throws Initialised {
         if (!initiatlisation ) throw new Initialised(" Constants not initialised");
 
-        return (c1 * Math.cos( w * time ) + c2 * Math.sin( w * time));
+        double angle = this.w * time;
+
+        return (c1 * Math.cos( this.w * time ) + c2 * Math.sin( w * time));
     }
 
 
@@ -130,7 +141,10 @@ public class WeinFilter {
     private double zCycloid( double time ) throws Initialised {
         if (!initiatlisation) throw new Initialised(" Constants not initialised");
 
-        return ( 0 );// TODO add the equation for z Cycliod
+        double angle = time * this.w;
+
+        return this.c2 * Math.cos( angle ) - this.c1 * Math.sin( angle ) ;
+
     }
 
     /** instant :: outputs the properties of a particle in an electric field at a given instant in time
@@ -139,13 +153,17 @@ public class WeinFilter {
      * @return a particle at the given time
      * @throws Initialised
      */
-    private Particle instant (double time ) throws Initialised { // TODO write the full value returns a "particle"
+    private Particle instant (double time ) throws Initialised {
         if (!initiatlisation) throw new Initialised(" Constants not initialised");
 
-        Particle current = null;
+        double e_b = this.electric / this.magnetic ;  // calcs the e_b value
+        double w_srd = this.w * this.w;     // Calc the w^2 value
 
+        return new Particle( new Cord( this.fleck.velocity.x * time, this.yCycloid( time ) + ( e_b * time ) + c3 , this.zCycloid( time) + c4), /** Position **/
+                                new Cord( this.fleck.velocity.x , this.w*( zCycloid( time )) + ( e_b ) , - w * ( yCycloid( time ) ) ), /** velocity **/
+                                    new Cord( 0 , - w_srd * ( yCycloid( time ) ) , - w_srd * ( yCycloid( time ) )  ), /** Acceleration **/
+                                        this.fleck.mass, this.fleck.charge  ); /** mass and charge **/
 
-        return current;
     }
 
     /** Trajectory :: takes in an array of floats and computes the trajectory over that time interval

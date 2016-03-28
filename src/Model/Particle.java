@@ -14,13 +14,15 @@ public class Particle {
     protected Cord acceleration;
 
     float mass;
+    float charge;
 
 
-    public Particle( Cord position, Cord velocity,Cord acceleration, float mass) {
+    public Particle( Cord position, Cord velocity,Cord acceleration, float mass, float charge) {
         this.position = position;
         this.velocity = velocity;
         this.acceleration = acceleration;
         this.mass = mass;
+        this.charge = charge;
     }
 
     public Particle( Particle from ) {
