@@ -9,7 +9,7 @@ package Model;
  */
 public class WeinFilter {
 
-    /** Feilds **/
+    /** Fields **/
     private double magnetic;
     private double electric;
 
@@ -20,11 +20,24 @@ public class WeinFilter {
 
     private double w;
 
-    Particle fleck;
+    private Particle fleck;
 
-    private boolean initiatlisation ;
+    private boolean setConstants;
+
+    /** Test Main **/
+    static public void main(String [] ignore){
+
+        WeinFilter foo  = new WeinFilter(0 ,0 );
+
+        double massE = 	9.10938356*Math.pow(10,-31);  // kg
+        double chargE = -1.602167565*Math.pow(10,-19);; // C
+        Particle electron = new Particle(new Cord(0,0,0),  // Starting Position
+                                        new Cord(0,0,0),   // starting Velocity
+                                        new Cord(0,0,0),  // starting Acceleration
+                                        massE, chargE  );
 
 
+    }
 
 
     /**  Methods  **/
@@ -39,7 +52,7 @@ public class WeinFilter {
         this.electric = electric;
         this. w =this.c1 = this.c2 = this.c3 = this.c4 = 0;
         fleck = null;
-        this. initiatlisation = false;
+        this.setConstants = false;
 
     }
 
@@ -67,7 +80,7 @@ public class WeinFilter {
     public void clear () {
         this.c1 = this.c2 = this. c3 = this.c4 = this .w = 0;
         fleck = null;
-        this . initiatlisation = false;
+        this .setConstants = false;
     }
 
     /** Initialises the particle specific consents
@@ -83,7 +96,7 @@ public class WeinFilter {
             this.setConsts();
         }
         catch( Exception e  ){
-            if ( initiatlisation){
+            if (setConstants){
                 this.clear();
                 this.init( from);
             }
@@ -97,7 +110,7 @@ public class WeinFilter {
      * @throws Initialised
      */
     private void setConsts() throws Initialised {
-        if ( (fleck == null)||( initiatlisation )) throw new Initialised( " Constants not initialised " );
+        if ( (fleck == null)||(setConstants)) throw new Initialised( " Constants not initialised " );
 
         // set w
         this.w = fleck.charge * this.magnetic / this.electric ;
@@ -114,7 +127,7 @@ public class WeinFilter {
         // set c4
         this.c4 = this.fleck.position.z-c2;
 
-        initiatlisation = true;
+        setConstants = true;
     }
 
     /** Computes the Z value for the cycloid motion at a given time interval
@@ -124,7 +137,7 @@ public class WeinFilter {
      * @throws Initialised
      */
     private double yCycloid ( double time) throws Initialised {
-        if (!initiatlisation ) throw new Initialised(" Constants not initialised");
+        if (!setConstants) throw new Initialised(" Constants not initialised");
 
         double angle = this.w * time;
 
@@ -139,7 +152,7 @@ public class WeinFilter {
      * @throws Initialised
      */
     private double zCycloid( double time ) throws Initialised {
-        if (!initiatlisation) throw new Initialised(" Constants not initialised");
+        if (!setConstants) throw new Initialised(" Constants not initialised");
 
         double angle = time * this.w;
 
@@ -154,28 +167,37 @@ public class WeinFilter {
      * @throws Initialised
      */
     private Particle instant (double time ) throws Initialised {
-        if (!initiatlisation) throw new Initialised(" Constants not initialised");
+        if (!setConstants) throw new Initialised(" Constants not initialised");
 
         double e_b = this.electric / this.magnetic ;  // calcs the e_b value
         double w_srd = this.w * this.w;     // Calc the w^2 value
 
-        return new Particle( new Cord( this.fleck.velocity.x * time, this.yCycloid( time ) + ( e_b * time ) + c3 , this.zCycloid( time) + c4), /** Position **/
-                                new Cord( this.fleck.velocity.x , this.w*( zCycloid( time )) + ( e_b ) , - w * ( yCycloid( time ) ) ), /** velocity **/
-                                    new Cord( 0 , - w_srd * ( yCycloid( time ) ) , - w_srd * ( yCycloid( time ) )  ), /** Acceleration **/
-                                        this.fleck.mass, this.fleck.charge  ); /** mass and charge **/
+        // TODO change this for Pi = P0 + V0 * t + (at^2)/2
+        // TODO change for Vi = V0 + a*t
+        // TODO change for a = a0 + a;
+        return new Particle( new Cord( this.fleck.velocity.x * time+this.fleck.position.x,/** Position **/
+                                            this.yCycloid( time ) + ( e_b * time ) + c3 ,
+                                            this.zCycloid( time) + c4),
+                                new Cord( this.fleck.velocity.x ,   /** velocity **/
+                                            this.w*( zCycloid( time )) + ( e_b ) ,
+                                            - w * ( yCycloid( time ) ) ),
+                                new Cord( 0 ,                   /** Acceleration **/
+                                            - w_srd * ( yCycloid( time ) ) ,
+                                            - w_srd * ( yCycloid( time ) )  ),
+                                this.fleck.mass, this.fleck.charge  ); /** mass and charge **/
 
     }
 
-    /** Trajectory :: takes in an array of floats and computes the trajectory over that time interval
+    /** Trajectory :: takes in an array of doubles and computes the trajectory over that time interval
      *      This outputs an array of points, representing the particle's information at that given moment
      *
-     * @param time [] An array of floats, should start at 0 and end at some given length
+     * @param time [] An array of doubles, should start at 0 and end at some given length
      * @return an array of particles resulting in the acceleration, velocity, and position of the particle
      *      at any given moment.
      * @throws Initialised
      */
-    public Particle[] trajectory( float [] time )  throws Initialised {
-        if (!initiatlisation) throw new Initialised(" Constants not initialised");
+    public Particle[] trajectory( double [] time )  throws Initialised {
+        if (!setConstants) throw new Initialised(" Constants not initialised");
 
         Particle traj [] = new Particle[ time.length ];
         traj[0]= new Particle( fleck );

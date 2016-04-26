@@ -13,11 +13,11 @@ public class Particle {
     protected Cord velocity;
     protected Cord acceleration;
 
-    float mass;
-    float charge;
+    double mass;
+    double charge;
 
 
-    public Particle( Cord position, Cord velocity,Cord acceleration, float mass, float charge) {
+    public Particle( Cord position, Cord velocity,Cord acceleration, double mass, double charge) {
         this.position = position;
         this.velocity = velocity;
         this.acceleration = acceleration;
