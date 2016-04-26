@@ -1,4 +1,4 @@
-/**
+package Controler; /**
  * Created by ::  llama ::  3/15/16.
  * For :: WeinFilder
  *
@@ -28,7 +28,7 @@ public class UI extends JFrame {
         });
     }
 
-    // The UI class
+    // The Controler.UI class
     public UI(String string) {
         super(string);
 
