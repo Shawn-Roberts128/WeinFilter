@@ -26,9 +26,9 @@ public class Axis extends JPanel{
     }
 
     public Axis(String title){
-        //super(title);
+        super();
 
-        
+
         Hashtable labelTable = new Hashtable();
         labelTable.put( new Integer( 0 ), new JLabel("0.0") );
         labelTable.put( new Integer( 500 ), new JLabel("0.5") );

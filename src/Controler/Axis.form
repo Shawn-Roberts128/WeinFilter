@@ -25,6 +25,8 @@
       <component id="a1579" class="javax.swing.JSlider" binding="Value">
         <constraints border-constraint="South"/>
         <properties>
+          <doubleBuffered value="true"/>
+          <focusCycleRoot value="true"/>
           <inverted value="false"/>
           <majorTickSpacing value="500"/>
           <maximum value="1000"/>
@@ -32,18 +34,20 @@
           <minimum value="0"/>
           <minorTickSpacing value="100"/>
           <name value="value"/>
+          <nextFocusableComponent value="a1579"/>
           <opaque value="false"/>
           <orientation value="0"/>
           <paintLabels value="true"/>
           <paintTicks value="true"/>
           <paintTrack value="true"/>
           <snapToTicks value="false"/>
-          <value value="500"/>
-          <valueIsAdjusting value="false"/>
+          <toolTipText value=""/>
+          <value value="156"/>
+          <valueIsAdjusting value="true"/>
         </properties>
         <clientProperties>
           <JSlider.isFilled class="java.lang.Boolean" value="true"/>
-          <Slider.paintThumbArrowShape class="java.lang.Boolean" value="false"/>
+          <Slider.paintThumbArrowShape class="java.lang.Boolean" value="true"/>
           <html.disable class="java.lang.Boolean" value="false"/>
         </clientProperties>
       </component>

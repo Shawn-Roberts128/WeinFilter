@@ -5,6 +5,8 @@ package Controler; /**
  * Good tautorial :: https://www.youtube.com/watch?v=G4jMzEGMKfg
  */
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,44 +39,71 @@ public class UI extends JFrame {
 
     // init the starts imitation of the window
     private void initUI(){
-
-        JMenu menu = new JMenu("Menu");
-        JMenuItem item = new JMenuItem("Quit");
-        item.setMnemonic(KeyEvent.VK_Q);
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println();
-                UI.this.setVisible(false);
-                UI.this.dispose();
-            }
-        });
-        menu.add(item);
-
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(menu);
-        setJMenuBar( menuBar );
-        this.getContentPane().add(menuBar);
-//        this.getContentPane().add(x);
-
+        getContentPane().setLayout(new BorderLayout());
         this.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
+        setmenuBar();
+        setbuttons();
+
+    }
+
+    private void setbuttons() {
         JLabel label = new JLabel(" What up");
         JButton clickMe = new JButton("ClickME");
         clickMe.setBackground( Color.black );
-//        Axis x= new Axis();
 
-        this.getContentPane().add(label);
-        this.getContentPane().add(clickMe);
+
+        this.getContentPane().add(label,BorderLayout.CENTER);
+        this.getContentPane().add(clickMe, BorderLayout.PAGE_END);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Container c = this.getContentPane();
         c.setBackground( Color.BLACK );
         this.getContentPane().setBackground(Color.black);
         this.repaint();
-        this.pack();
+
+        this.setVisible(true);
+        this.pack();this.revalidate();
         this.setSize(screenSize.width/2, screenSize.height/2);
         this.setLocationRelativeTo(null);
+    }
+
+    private void setmenuBar() {
+        // add the quit button
+        JMenuItem quit = new JMenuItem("Quit");
+        quit.setMnemonic(KeyEvent.VK_Q);
+        quit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println();
+                UI.this.setVisible(true);
+                UI.this.dispose();
+            }
+        });
+
+        // the file save botton
+        JMenuItem fileSave = new JMenuItem("Save Trajectory");
+        fileSave.setMnemonic(KeyEvent.VK_S);
+        fileSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("Print out file");
+                //TODO add the save file as .txt
+            }
+        });
+
+
+        JMenu menu = new JMenu("Menu");
+        menu.setMnemonic(KeyEvent.VK_M);
+        menu.add(quit);
+        menu.add(fileSave);
+
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(menu);
+        setJMenuBar(menuBar);
+
+
+        this.getContentPane().add(menuBar, BorderLayout.PAGE_START);
     }
 
 }
