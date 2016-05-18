@@ -9,21 +9,30 @@ package Model;
  */
 public class Particle {
 
-    protected Cord position;
+    protected Cord position ;
     protected Cord velocity;
     protected Cord acceleration;
 
-    float mass;
-    float charge;
+    double mass;
+    double charge;
 
+    Particle(){
 
-    public Particle( Cord position, Cord velocity,Cord acceleration, float mass, float charge) {
+        this.position = new Cord();
+        this.velocity = new Cord();
+        this.acceleration = new Cord();
+        this.mass = 0;
+        this.charge = 0;
+    }
+
+    public Particle( Cord position, Cord velocity,Cord acceleration, double mass, double charge) {
         this.position = position;
         this.velocity = velocity;
         this.acceleration = acceleration;
         this.mass = mass;
         this.charge = charge;
     }
+
 
     public Particle( Particle from ) {
 

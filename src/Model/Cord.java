@@ -1,7 +1,5 @@
 package Model;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 /**
  * By: Shawn Roberts
  * For: CS 202 Projects
@@ -10,9 +8,16 @@ import com.sun.org.apache.xpath.internal.SourceTree;
  * Purpose ::
  */
 public class Cord {
-    protected double x;
-    protected double y;
-    protected double z;
+    protected double x = 0;
+    protected double y = 0;
+    protected double z = 0;
+
+
+    /** default
+     *
+     */
+    public Cord() {
+    }
 
     /** Constructor
      *

@@ -18,42 +18,75 @@ package Model;
 public class VoltAccel {
 
     /** Fields **/
-    private double electric;    // positive is + y, negative is -y direction of field
-    private Particle fleck;     // the Particle  to be accelerated
-    private double leftVolt;    // the voltage on the left plate ( - y side)
-    private double rightVolt;   // the voltage on the right play ( + y side);
+    private double electric = 0;    // positive is + y, negative is -y direction of field
+    private Particle fleck = null;     // the Particle  to be accelerated
+    private double leftVolt = 0;    // the voltage on the left plate ( - y side)
+    private double rightVolt = 0;   // the voltage on the right play ( + y side);
+    private boolean init = false;
 
 
     /** Test Main **/
+    public static void main( String [] ignore) {
+
+        // default constructor
+        VoltAccel box1 = new VoltAccel();
+
+        // default values
+        Particle fleck = new Particle();
+        VoltAccel box2 = new VoltAccel(0,545);
+        box2.setFleck( fleck);
+
+
+
+
+    }
+
     /** Methods **/
+
+    public VoltAccel() {
+    }
 
     public VoltAccel(double leftVolt, double rightVolt) {
         this.leftVolt = leftVolt;
         this.rightVolt = rightVolt;
         this.electric = rightVolt - leftVolt; // initialise the electric field
         fleck = null;
+        init = false;
     }
 
     public void setFleck(Particle fleck) {
         this.fleck = fleck;
+        init = checkInit();
     }
 
     public void setLeftVolt(double leftVolt) {
         this.leftVolt = leftVolt;
         this.electric = rightVolt - leftVolt; // reset the Electric field
+        init=checkInit();
     }
 
     public void setRightVolt(double rightVolt) {
         this.rightVolt = rightVolt;
         this.electric = rightVolt - leftVolt; // reset the Electric field
+        init = checkInit();
     }
-        /** instant :: outputs the properties of a particle in an electric field at a given instant in time
+
+    /** checkInit :: checks the to see if the values are initialised
+     *
+     * @return if state of initalisation;
+     */
+    public boolean checkInit(){
+        return (fleck != null) && ((rightVolt != 0) || (leftVolt != 0));
+    }
+
+    /** instant :: outputs the properties of a particle in an electric field at a given instant in time
      *
      * @param time the computed particles instant
      * @return a particle at the given time
      * @throws Initialised
      */
     private Particle instant (double time ) throws Initialised {
+        if ( !checkInit() ) throw new Initialised("Value Not Initialised");
 
         this.electric = rightVolt - leftVolt; // reset the Electric field
 
@@ -84,6 +117,8 @@ public class VoltAccel {
      * @throws Initialised
      */
     public Particle[] trajectory( double [] time )  throws Initialised {
+
+        if ( !checkInit() ) throw new Initialised("Values not Initialised");
 
         Particle traj [] = new Particle[ time.length ];
         traj[0]= new Particle( fleck );

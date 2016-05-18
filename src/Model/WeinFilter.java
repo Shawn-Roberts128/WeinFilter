@@ -22,7 +22,7 @@ public class WeinFilter {
 
     Particle fleck;
 
-    private boolean initiatlisation ;
+    private boolean init;
 
 
 
@@ -39,7 +39,7 @@ public class WeinFilter {
         this.electric = electric;
         this. w =this.c1 = this.c2 = this.c3 = this.c4 = 0;
         fleck = null;
-        this. initiatlisation = false;
+        this.init = false;
 
     }
 
@@ -67,7 +67,7 @@ public class WeinFilter {
     public void clear () {
         this.c1 = this.c2 = this. c3 = this.c4 = this .w = 0;
         fleck = null;
-        this . initiatlisation = false;
+        this .init = false;
     }
 
     /** Initialises the particle specific consents
@@ -83,7 +83,7 @@ public class WeinFilter {
             this.setConsts();
         }
         catch( Exception e  ){
-            if ( initiatlisation){
+            if (init){
                 this.clear();
                 this.init( from);
             }
@@ -97,7 +97,7 @@ public class WeinFilter {
      * @throws Initialised
      */
     private void setConsts() throws Initialised {
-        if ( (fleck == null)||( initiatlisation )) throw new Initialised( " Constants not initialised " );
+        if ( (fleck == null)||(init)) throw new Initialised( " Constants not initialised " );
 
         // set w
         this.w = fleck.charge * this.magnetic / this.electric ;
@@ -114,7 +114,7 @@ public class WeinFilter {
         // set c4
         this.c4 = this.fleck.position.z-c2;
 
-        initiatlisation = true;
+        init = true;
     }
 
     /** Computes the Z value for the cycloid motion at a given time interval
@@ -124,7 +124,7 @@ public class WeinFilter {
      * @throws Initialised
      */
     private double yCycloid ( double time) throws Initialised {
-        if (!initiatlisation ) throw new Initialised(" Constants not initialised");
+        if (!init) throw new Initialised(" Constants not initialised");
 
         double angle = this.w * time;
 
@@ -139,7 +139,7 @@ public class WeinFilter {
      * @throws Initialised
      */
     private double zCycloid( double time ) throws Initialised {
-        if (!initiatlisation) throw new Initialised(" Constants not initialised");
+        if (!init) throw new Initialised(" Constants not initialised");
 
         double angle = time * this.w;
 
@@ -154,7 +154,7 @@ public class WeinFilter {
      * @throws Initialised
      */
     private Particle instant (double time ) throws Initialised {
-        if (!initiatlisation) throw new Initialised(" Constants not initialised");
+        if (!init) throw new Initialised(" Constants not initialised");
 
         double e_b = this.electric / this.magnetic ;  // calcs the e_b value
         double w_srd = this.w * this.w;     // Calc the w^2 value
@@ -175,7 +175,7 @@ public class WeinFilter {
      * @throws Initialised
      */
     public Particle[] trajectory( float [] time )  throws Initialised {
-        if (!initiatlisation) throw new Initialised(" Constants not initialised");
+        if (!init) throw new Initialised(" Constants not initialised");
 
         Particle traj [] = new Particle[ time.length ];
         traj[0]= new Particle( fleck );
