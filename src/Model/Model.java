@@ -5,6 +5,10 @@ package Model;
  */
 public class Model {
 
+    private VoltAccel stage1;
+    public WeinFilter stage2;
 
+
+    
 
 }
