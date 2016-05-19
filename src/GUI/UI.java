@@ -1,11 +1,9 @@
-package Controler; /**
+package GUI; /**
  * Created by ::  llama ::  3/15/16.
  * For :: WeinFilder
  *
  * Good tautorial :: https://www.youtube.com/watch?v=G4jMzEGMKfg
  */
-
-import com.sun.org.apache.xpath.internal.SourceTree;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -30,7 +28,7 @@ public class UI extends JFrame {
         });
     }
 
-    // The Controler.UI class
+    // The GUI.UI class
     public UI(String string) {
         super(string);
 
@@ -45,16 +43,6 @@ public class UI extends JFrame {
         setmenuBar();
         setbuttons();
 
-    }
-
-    private void setbuttons() {
-        JLabel label = new JLabel(" What up");
-        JButton clickMe = new JButton("ClickME");
-        clickMe.setBackground( Color.black );
-
-
-        this.getContentPane().add(label,BorderLayout.CENTER);
-        this.getContentPane().add(clickMe, BorderLayout.PAGE_END);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Container c = this.getContentPane();
@@ -66,6 +54,18 @@ public class UI extends JFrame {
         this.pack();this.revalidate();
         this.setSize(screenSize.width/2, screenSize.height/2);
         this.setLocationRelativeTo(null);
+    }
+
+    private void setbuttons() {
+        JLabel label = new JLabel(" What up");
+        JButton clickMe = new JButton("ClickME");
+        clickMe.setBackground( Color.black );
+
+
+        this.getContentPane().add(label,BorderLayout.CENTER);
+        this.getContentPane().add(clickMe, BorderLayout.PAGE_END);
+
+
     }
 
     private void setmenuBar() {

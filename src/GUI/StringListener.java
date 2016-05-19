@@ -1,4 +1,4 @@
-package Controler;
+package GUI;
 
 /**
  * By: Shawn Roberts

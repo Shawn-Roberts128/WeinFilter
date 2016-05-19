@@ -1,6 +1,5 @@
-package Controler;
+package GUI;
 
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 
