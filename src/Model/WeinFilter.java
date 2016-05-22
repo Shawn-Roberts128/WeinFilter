@@ -20,7 +20,7 @@ public class WeinFilter {
 
     private double w;
 
-    Particle fleck;
+    private Particle fleck;
 
     private boolean init;
 
@@ -99,21 +99,30 @@ public class WeinFilter {
     private void setConsts() throws Initialised {
         if ( (fleck == null)||(init)) throw new Initialised( " Constants not initialised " );
 
-        // set w
-        this.w = fleck.charge * this.magnetic / this.electric ;
 
-        // set c1
-        this.c1 = -(this.fleck.velocity.z / w) ;
+        if 0((this.electric != 0)||(this.magnetic!=0)||(this.fleck.charge != 0 )) {
+            // set w
+            this.w = fleck.charge * this.magnetic / this.electric;
+            // set c1
+            this.c1 = -(this.fleck.velocity.z / w);
 
-        // set c2
-        this.c2 = ( this.fleck.velocity.y - (this.electric / this.magnetic ))/this.w;
+            // set c2
+            this.c2 = (this.fleck.velocity.y - (this.electric / this.magnetic)) / this.w;
+        }else {
+            this.w = 0;
 
-        // set c3
-        this.c3 = this.fleck.position.y-c1;
+            this.c1 = 0;
 
-        // set c4
-        this.c4 = this.fleck.position.z-c2;
+            // set c2
+            this.c2 = (this.fleck.velocity.y - 0);
+        }
 
+
+            // set c3
+            this.c3 = this.fleck.position.y - c1;
+
+            // set c4
+            this.c4 = this.fleck.position.z - c2;
         init = true;
     }
 
