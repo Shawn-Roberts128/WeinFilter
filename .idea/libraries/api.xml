@@ -1,0 +1,20 @@
+<component name="libraryTable">
+  <library name="api">
+    <CLASSES />
+    <JAVADOC>
+      <root url="http://maven.jzy3d.org/releases/org/jzy3d/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master.zip!/jzy3d-api-master/jzy3d-api/src/api" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master.zip!/jzy3d-api-master/jzy3d-api/src/awt" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master.zip!/jzy3d-api-master/jzy3d-api/src/bridge" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master.zip!/jzy3d-api-master/jzy3d-api/src/swing" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master.zip!/jzy3d-api-master/jzy3d-api/src/tests" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master.zip!/jzy3d-api-master/jzy3d-javafx/src/main/java" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master.zip!/jzy3d-api-master/jzy3d-jdt-core/src/main/java" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master.zip!/jzy3d-api-master/jzy3d-jdt-core/src/test/java" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master.zip!/jzy3d-api-master/jzy3d-swt/src/main/java" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master.zip!/jzy3d-api-master/jzy3d-tutorials/src/main/java" />
+    </SOURCES>
+  </library>
+</component>

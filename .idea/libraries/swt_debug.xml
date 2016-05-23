@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="swt-debug">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-swt/lib/misc/swt-debug.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-swt/lib/misc/swt.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-swt/lib/misc/swt-debug.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-swt/lib/misc/swt.jar!/" />
+    </NATIVE>
+    <SOURCES />
+  </library>
+</component>

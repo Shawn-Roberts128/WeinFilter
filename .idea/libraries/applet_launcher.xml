@@ -1,0 +1,30 @@
+<component name="libraryTable">
+  <library name="applet-launcher">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/applet-launcher.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/gluegen-rt.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/gluegen.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/jogl-all.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/gluegen-rt-natives-linux-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/gluegen-rt-natives-linux-armv7.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/gluegen-rt-natives-linux-armv7hf.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/gluegen-rt-natives-linux-i586.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/gluegen-rt-natives-solaris-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/gluegen-rt-natives-solaris-i586.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/gluegen-rt-natives-windows-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/gluegen-rt-natives-windows-i586.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/jogl-all-natives-linux-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/jogl-all-natives-linux-armv7.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/jogl-all-natives-linux-armv7hf.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/jogl-all-natives-linux-i586.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/jogl-all-natives-solaris-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/jogl-all-natives-solaris-i586.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/jogl-all-natives-windows-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/jogl2-rc10/jogl-all-natives-windows-i586.jar!/" />
+    </NATIVE>
+    <SOURCES />
+  </library>
+</component>

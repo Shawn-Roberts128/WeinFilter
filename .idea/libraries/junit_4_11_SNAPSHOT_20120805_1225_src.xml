@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="junit-4.11-SNAPSHOT-20120805-1225-src">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/misc/junit-4.11-SNAPSHOT-20120805-1225.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/misc/log4j-1.2.16.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/misc/opencsv-2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Downloads/jzy3d-api-master/jzy3d-api/lib/misc/junit-4.11-SNAPSHOT-20120805-1225-src.jar!/" />
+    </SOURCES>
+  </library>
+</component>
