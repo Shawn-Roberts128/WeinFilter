@@ -14,76 +14,76 @@ import org.jzy3d.plot3d.rendering.canvas.Quality;
  *
  *
  */
-public class WeinFilter { //TODO fix if there is a null W value
+public class WeinFilter {
 
     /** Fields **/
-    private double magnetic;
-    private double electric;
+    protected double magnetic;
+    protected double electric;
 
-    private double c1 = Double.NaN;
-    private double c2 = Double.NaN;
-    private double c3 = Double.NaN;
-    private double c4 = Double.NaN;
+    protected double c1 = Double.NaN;
+    protected double c2 = Double.NaN;
+    protected double c3 = Double.NaN;
+    protected double c4 = Double.NaN;
 
-    private double w = Double.NaN;
+    protected double w = Double.NaN;
 
-    Particle fleck= null;
+    protected  Particle fleck= null;
 
-    private boolean init;
+    protected boolean init;
 
 
     /** Test Main **/
     public static void main(String [] ignore) throws Exception {
 
         AnalysisLauncher.open(new AbstractAnalysis() {
-           @Override
-           public void init() throws Exception {
+            @Override
+            public void init() throws Exception {
 
-               // Initialisation
-               int size = 10000;
+                // Initialisation
+                int size = 10000;
 
-               int electric = 1;
-               int magnetic = 1;
+                int electric = 1;
+                int magnetic = 1;
 
-               double mass = 1.0;
-               double charge = 1.0;
+                double mass = 1.0;
+                double charge = 1.0;
 
-               Cord not = new Cord(0, 0, 0);
+                Cord not = new Cord(0, 0, 0);
 
-               // Cord vel = new Cord(0, 1, 0); // number 1 test should be a line
-               // Cord vel = new Cord(0, 1, 1); // test should be a "bouncing ball"
-               Cord vel = new Cord(1, 1, 1);    // test should be a spiral
+                // Cord vel = new Cord(0, 1, 0); // number 1 test should be a line
+                // Cord vel = new Cord(0, 1, 1); // test should be a "bouncing ball"
+                Cord vel = new Cord(1, 1, 1);    // test should be a spiral
 
-               // Make filter object
-               WeinFilter filter = new WeinFilter( magnetic, electric);
-               filter.init(new Particle( not,vel,not, mass,charge));
+                // Make filter object
+                WeinFilter filter = new WeinFilter( magnetic, electric);
+                filter.init(new Particle( not,vel,not, mass,charge));
 
-               // Time and trajectory
-               double [] timeLine = new double [size];
-               double time = 0.01;
+                // Time and trajectory
+                double [] timeLine = new double [size];
+                double time = 0.01;
 
-               for (int i = 0; i < size; ++i){
-                   timeLine[i] = i*time;
-               }
+                for (int i = 0; i < size; ++i){
+                    timeLine[i] = i*time;
+                }
 
-               Particle [] traj = filter.trajectory(timeLine);
-               Coord3d [] points = new Coord3d[size];
+                Particle [] traj = filter.trajectory(timeLine);
+                Coord3d [] points = new Coord3d[size];
 
-               // convert the trajectory to cords to be plotted
-               for (int i = 0; i < size ; ++i) {
+                // convert the trajectory to cords to be plotted
+                for (int i = 0; i < size ; ++i) {
 
-                   points[i] = traj[i].pathCord();
+                    points[i] = traj[i].pathCord();
 
-                   // used to output the points
-                   // System.out.println("T: "+ timeLine[i]+"\tP: "+points[i]);
-               }
+                    // used to output the points
+                    // System.out.println("T: "+ timeLine[i]+"\tP: "+points[i]);
+                }
 
-               // Plot the trajectory
-               Scatter scatter = new Scatter( points );
-               chart = AWTChartComponentFactory.chart(Quality.Advanced, "newt");
-               chart.getScene().add(scatter);
-           }
-       });
+                // Plot the trajectory
+                Scatter scatter = new Scatter( points );
+                chart = AWTChartComponentFactory.chart(Quality.Advanced, "newt");
+                chart.getScene().add(scatter);
+            }
+        });
 
     }
 
@@ -219,16 +219,16 @@ public class WeinFilter { //TODO fix if there is a null W value
      * @return a particle at the given time
      * @throws Initialised
      */
-    private Particle instant (double time ) throws Initialised {
+    protected Particle instant(double time) throws Initialised {
         if (!init) throw new Initialised(" Constants not initialised");
 
         double e_b = this.electric / this.magnetic ;  // calculations the e_b value
         double w_srd = this.w * this.w;     // Calc the w^2 value
 
         return new Particle( new Cord( this.fleck.velocity.x * time, this.yCycloid( time ) + ( e_b * time ) + c3 , this.zCycloid( time) + c4), /** Position **/
-                             new Cord( this.fleck.velocity.x , this.w*( zCycloid( time )) + ( e_b ) , - w * ( yCycloid( time ) ) ), /** velocity **/
-                             new Cord( 0 , - w_srd * ( yCycloid( time ) ) , - w_srd * ( yCycloid( time ) )  ), /** Acceleration **/
-                             this.fleck.mass, this.fleck.charge  ); /** mass and charge **/
+                new Cord( this.fleck.velocity.x , this.w*( zCycloid( time )) + ( e_b ) , - w * ( yCycloid( time ) ) ), /** velocity **/
+                new Cord( 0 , - w_srd * ( yCycloid( time ) ) , - w_srd * ( yCycloid( time ) )  ), /** Acceleration **/
+                this.fleck.mass, this.fleck.charge  ); /** mass and charge **/
 
     }
 

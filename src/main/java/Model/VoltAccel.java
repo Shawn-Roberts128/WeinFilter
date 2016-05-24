@@ -36,9 +36,6 @@ public class VoltAccel {
         VoltAccel box2 = new VoltAccel(0,545);
         box2.setFleck( fleck);
 
-
-
-
     }
 
     /** Methods **/
@@ -68,16 +65,18 @@ public class VoltAccel {
     public void setRightVolt(double rightVolt) {
         this.rightVolt = rightVolt;
         this.electric = rightVolt - leftVolt; // reset the Electric field
-        init = checkInit();
+        this.init = checkInit();
     }
 
     /** checkInit :: checks the to see if the values are initialised
      *
-     * @return if state of initalisation;
+     * @return if state of initialisation;
      */
     public boolean checkInit(){
         return (fleck != null) && ((rightVolt != 0) || (leftVolt != 0));
     }
+
+
 
     /** instant :: outputs the properties of a particle in an electric field at a given instant in time
      *
@@ -86,7 +85,7 @@ public class VoltAccel {
      * @throws Initialised
      */
     private Particle instant (double time ) throws Initialised {
-        if ( !checkInit() ) throw new Initialised("Value Not Initialised");
+        if ( !init ) throw new Initialised("Value Not Initialised");
 
         this.electric = rightVolt - leftVolt; // reset the Electric field
 

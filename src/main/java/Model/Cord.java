@@ -8,9 +8,9 @@ package Model;
  * Purpose ::
  */
 public class Cord {
-    protected double x = 0;
-    protected double y = 0;
-    protected double z = 0;
+    protected double x = Double.NaN;
+    protected double y = Double.NaN;
+    protected double z = Double.NaN;
 
 
     /** default

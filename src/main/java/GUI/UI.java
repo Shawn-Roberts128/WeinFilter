@@ -1,8 +1,8 @@
 package GUI; /**
  * Created by ::  llama ::  3/15/16.
- * For :: WeinFilder
+ * For :: WienFilter
  *
- * Good tautorial :: https://www.youtube.com/watch?v=G4jMzEGMKfg
+ * Good tutorial :: https://www.youtube.com/watch?v=G4jMzEGMKfg
  */
 
 import java.awt.*;
@@ -22,7 +22,7 @@ public class UI extends JFrame {
             public void run() {
                 JFrame.setDefaultLookAndFeelDecorated( false );
 
-                UI ex = new UI(" Whatup ");
+                UI ex = new UI(" What up ");
                 ex.getContentPane().setBackground( Color.black );
                 ex.setVisible(true);
             }
@@ -82,7 +82,7 @@ public class UI extends JFrame {
             }
         });
 
-        // the file save botton
+        // the file save button
         JMenuItem fileSave = new JMenuItem("Save Trajectory");
         fileSave.setMnemonic(KeyEvent.VK_S);
         fileSave.addActionListener(new ActionListener() {
