@@ -40,6 +40,7 @@ public class Particle {
         this.velocity = new Cord (from.velocity);
         this.acceleration = new Cord ( from.acceleration);
         this.mass = from. mass;
+        this.charge=from.charge;
 
     }
 

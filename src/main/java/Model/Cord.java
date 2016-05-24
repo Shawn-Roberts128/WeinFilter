@@ -22,9 +22,9 @@ public class Cord {
     /** Constructor
      *
      * Components to be set
-     * @param x componnet
-     * @param y componnent
-     * @param z componnent
+     * @param x component
+     * @param y component
+     * @param z component
      */
     public Cord(double x, double y, double z) {
         this.x = x;
@@ -67,16 +67,16 @@ public class Cord {
 
     /**returns a negated object
      *
-     * @return negated cordonnate
+     * @return negated coordinate
      */
     public Cord neg () {
         return new Cord( -this.x, -this.y, -this.z );
     }
 
-    /** returns a multipiled Cord
+    /** returns a multiple Cord
      *
-     * @param mul value to be muliplied
-     * @return multiplied cordonate
+     * @param mul value to be multiplied
+     * @return multiplied carbonate
      */
     public Cord mult( double mul){
         return new Cord( mul*this.x, mul*this.y, mul*this.z );
@@ -106,7 +106,7 @@ public class Cord {
         System.out.println("\n(0,0,1)");
         a.cross(new Cord( 0, 0 , 1.0  )).disp();
 
-        System.out.println("\n :: Mult :: ");
+        System.out.println("\n :: Multiple :: ");
         System.out.println("\n 0 ");
         a.mult(0).disp();
 

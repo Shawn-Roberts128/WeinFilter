@@ -16,18 +16,18 @@ import org.jzy3d.plot3d.rendering.canvas.Quality;
  */
 public class WeinFilter { //TODO fix if there is a null W value
 
-    /** Feilds **/
+    /** Fields **/
     private double magnetic;
     private double electric;
 
-    private double c1;
-    private double c2;
-    private double c3;
-    private double c4;
+    private double c1 = Double.NaN;
+    private double c2 = Double.NaN;
+    private double c3 = Double.NaN;
+    private double c4 = Double.NaN;
 
-    private double w;
+    private double w = Double.NaN;
 
-    Particle fleck;
+    Particle fleck= null;
 
     private boolean init;
 
@@ -39,33 +39,47 @@ public class WeinFilter { //TODO fix if there is a null W value
            @Override
            public void init() throws Exception {
 
-               int size = 10;
+               // Initialisation
+               int size = 10000;
 
-               Cord not = new Cord(0,0,0);
-               Cord vel = new Cord(0, 1 , 0);
+               int electric = 1;
+               int magnetic = 1;
 
-               WeinFilter filter = new WeinFilter( 1, 1);
+               double mass = 1.0;
+               double charge = 1.0;
 
-               filter.init(new Particle( not,vel,not,1,0));
+               Cord not = new Cord(0, 0, 0);
 
+               // Cord vel = new Cord(0, 1, 0); // number 1 test should be a line
+               // Cord vel = new Cord(0, 1, 1); // test should be a "bouncing ball"
+               Cord vel = new Cord(1, 1, 1);    // test should be a spiral
+
+               // Make filter object
+               WeinFilter filter = new WeinFilter( magnetic, electric);
+               filter.init(new Particle( not,vel,not, mass,charge));
+
+               // Time and trajectory
                double [] timeLine = new double [size];
-               double time = 0.1;
+               double time = 0.01;
 
                for (int i = 0; i < size; ++i){
                    timeLine[i] = i*time;
                }
 
                Particle [] traj = filter.trajectory(timeLine);
-
                Coord3d [] points = new Coord3d[size];
 
+               // convert the trajectory to cords to be plotted
                for (int i = 0; i < size ; ++i) {
 
                    points[i] = traj[i].pathCord();
-                   System.out.println("T: "+ timeLine[i]+"\tP: "+points[i]);
+
+                   // used to output the points
+                   // System.out.println("T: "+ timeLine[i]+"\tP: "+points[i]);
                }
 
-               Scatter scatter = new Scatter( points);
+               // Plot the trajectory
+               Scatter scatter = new Scatter( points );
                chart = AWTChartComponentFactory.chart(Quality.Advanced, "newt");
                chart.getScene().add(scatter);
            }
@@ -85,7 +99,7 @@ public class WeinFilter { //TODO fix if there is a null W value
     public WeinFilter(double magnetic, double electric) {
         this.magnetic = magnetic;
         this.electric = electric;
-        this. w =this.c1 = this.c2 = this.c3 = this.c4 = 0;
+        this. w =this.c1 = this.c2 = this.c3 = this.c4 = Double.NaN;
         fleck = null;
         this.init = false;
 
@@ -109,7 +123,7 @@ public class WeinFilter { //TODO fix if there is a null W value
     }
 
 
-    /** Clears the partical specific data for this filter item
+    /** Clears the particle specific data for this filter item
      *      This clears C1, C2, C3, C4, w, and fleck
      */
     public void clear () {
@@ -126,7 +140,7 @@ public class WeinFilter { //TODO fix if there is a null W value
     public void init ( Particle from ) {
         try{
 
-            if (from == null) throw new NullPointerException(" Partical is null");
+            if (from == null) throw new NullPointerException(" Particle is null");
             fleck = new Particle( from );
             this.setConsts();
         }
@@ -145,7 +159,11 @@ public class WeinFilter { //TODO fix if there is a null W value
      * @throws Initialised
      */
     private void setConsts() throws Initialised {
+        // check for bad initialisation
         if ( (fleck == null)||(init)) throw new Initialised( " Constants not initialised " );
+        if ( (this.magnetic==0.0)||(this.electric==0.0) ) {
+            throw new Initialised(((this.magnetic == 0) ? "Magnetic" : "Electric") + "Fields are set to 0");
+        }
 
         // set w
         this.w = fleck.charge * this.magnetic / this.electric ;
@@ -204,13 +222,13 @@ public class WeinFilter { //TODO fix if there is a null W value
     private Particle instant (double time ) throws Initialised {
         if (!init) throw new Initialised(" Constants not initialised");
 
-        double e_b = this.electric / this.magnetic ;  // calcs the e_b value
+        double e_b = this.electric / this.magnetic ;  // calculations the e_b value
         double w_srd = this.w * this.w;     // Calc the w^2 value
 
         return new Particle( new Cord( this.fleck.velocity.x * time, this.yCycloid( time ) + ( e_b * time ) + c3 , this.zCycloid( time) + c4), /** Position **/
-                                new Cord( this.fleck.velocity.x , this.w*( zCycloid( time )) + ( e_b ) , - w * ( yCycloid( time ) ) ), /** velocity **/
-                                    new Cord( 0 , - w_srd * ( yCycloid( time ) ) , - w_srd * ( yCycloid( time ) )  ), /** Acceleration **/
-                                        this.fleck.mass, this.fleck.charge  ); /** mass and charge **/
+                             new Cord( this.fleck.velocity.x , this.w*( zCycloid( time )) + ( e_b ) , - w * ( yCycloid( time ) ) ), /** velocity **/
+                             new Cord( 0 , - w_srd * ( yCycloid( time ) ) , - w_srd * ( yCycloid( time ) )  ), /** Acceleration **/
+                             this.fleck.mass, this.fleck.charge  ); /** mass and charge **/
 
     }
 

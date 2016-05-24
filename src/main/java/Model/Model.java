@@ -9,7 +9,7 @@ import java.io.IOException;
  */
 public class Model {
 
-    private int[] box;      // box dimentions (depth, width, hights) (x,y,z)
+    private int[] box;      // box dimensions (depth, width, heights) (x,y,z)
     private int[] opening;  // size and position of the opening from the
                             //      voltage accelerator to the filter.
     private int size;
@@ -50,7 +50,7 @@ public class Model {
         return writer;
     }
 
-    /** TODO add the write the volageAcc and te Wien Filter
+    /** TODO add the write the volage Acc and te Wien Filter
      *
      */
 
