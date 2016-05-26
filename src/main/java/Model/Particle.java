@@ -21,8 +21,8 @@ public class Particle {
         this.position = new Cord();
         this.velocity = new Cord();
         this.acceleration = new Cord();
-        this.mass = 0;
-        this.charge = 0;
+        this.mass = Double.NaN;
+        this.charge = Double.NaN;
     }
 
     public Particle( Cord position, Cord velocity,Cord acceleration, double mass, double charge) {
