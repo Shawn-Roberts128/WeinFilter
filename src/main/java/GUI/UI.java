@@ -38,7 +38,7 @@ public class UI extends JFrame {
 
     // init the starts imitation of the window
     private void initUI(){
-        getContentPane().setLayout(new BorderLayout());
+        this.getContentPane().setLayout(new BorderLayout());
         this.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
         setmenuBar();
@@ -58,14 +58,18 @@ public class UI extends JFrame {
     }
 
     private void setbuttons() {
-        JLabel label = new JLabel(" What up");
+        JPanel startCond = new JPanel(new SpringLayout());
+        startCond.setBackground(Color.RED);
+
+
         JButton clickMe = new JButton("ClickME");
-        clickMe.setBackground( Color.black );
+        clickMe.setBackground( Color.BLUE );
+        startCond.add(clickMe);
 
-
-        this.getContentPane().add(label,BorderLayout.CENTER);
-        this.getContentPane().add(clickMe, BorderLayout.PAGE_END);
-
+        //this.getContentPane().add(label,BorderLayout.CENTER);
+        //this.getContentPane().add(clickMe, BorderLayout.PAGE_END);
+        startCond.setVisible(true);
+        this.getContentPane().add(startCond, BorderLayout.LINE_START);
 
     }
 

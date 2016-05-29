@@ -1,7 +1,13 @@
 package GUI;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
+
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Hashtable;
@@ -14,7 +20,7 @@ import java.util.Hashtable;
  * Purpose ::
  */
 
-public class Axis extends JFrame{
+public class Axis extends JFrame implements ChangeListener, ActionListener {
 
     private StringListener textListener;
     private JSlider value;
@@ -22,11 +28,13 @@ public class Axis extends JFrame{
     private JTextField min;
     private JTextField max;
 
-    private JTextArea test ;
+    private JTextArea test;
     String val;
+    private double minv;
+    private double maxv;
 
 
-    public static void main (String [] ignore) {
+    public static void main(String[] ignore) {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -39,7 +47,7 @@ public class Axis extends JFrame{
         });
     }
 
-    public Axis(String title){
+    public Axis(String title) {
         super(title);
         val = String.valueOf(title.charAt(0));
 
@@ -47,9 +55,9 @@ public class Axis extends JFrame{
         initUI();
     }
 
-    private void initUI(){
+    private void initUI() {
 
-        this.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setLayout(new BorderLayout());
 
         slider();
@@ -58,28 +66,20 @@ public class Axis extends JFrame{
 
         test = new JTextArea();
 
-        this.getContentPane().add(test,BorderLayout.CENTER);
+        this.getContentPane().add(test, BorderLayout.CENTER);
 
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Container c = this.getContentPane();
-        c.setBackground( Color.BLACK );
+        c.setBackground(Color.BLACK);
         this.getContentPane().setBackground(Color.black);
         this.repaint();
 
         this.setVisible(true);
-        this.pack();this.revalidate();
+        this.pack();
+        this.revalidate();
         //this.setSize(screenSize.width/4, screenSize.height/4);
         this.setLocationRelativeTo(null);
-
-        value.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                textListener.textEmmited(Integer.toString(value.getValue()));
-                System.out.println(value.getValue());
-                test.append(String.valueOf(value.getValue()));
-            }
-        });
 
 
     }
@@ -88,37 +88,83 @@ public class Axis extends JFrame{
         this.textListener = textListener;
     }
 
-    private void slider(){
+
+    private void slider() {
 
         value = new JSlider();
-        value.createStandardLabels(1,0);
+        value.createStandardLabels(1, 0);
         value.setMajorTickSpacing(10);
         value.setMinorTickSpacing(5);
         value.setPaintTicks(true);
         value.setPaintLabels(true);
-        value.setValue(50);
+        value.setValue(120);
         value.setSize(new Dimension(100, 10));
-
+        value.addChangeListener(this);
 
         Hashtable labelTable = new Hashtable();
-        labelTable.put(0   , new JLabel("0.0") );
-        labelTable.put(500 , new JLabel("0.5") );
-        labelTable.put(1000, new JLabel("1.0") );
+        labelTable.put(0, new JLabel("0.0"));
+        labelTable.put(500, new JLabel("0.5"));
+        labelTable.put(1000, new JLabel("1.0"));
         value.setLabelTable(labelTable);
     }
 
-    private void minmax () {
+    private void minmax() {
 
         min = new JTextField("min" + val);
-        min.setSize(new Dimension(20,20));
+        min.setSize(new Dimension(20, 20));
         max = new JTextField("max" + val);
-        max.setSize(new Dimension(20,20));
+        max.setSize(new Dimension(20, 20));
+        min.addActionListener(this);
+        max.addActionListener(this);
 
-        this.getContentPane().add(value,BorderLayout.PAGE_END);
-        this.getContentPane().add(min,BorderLayout.LINE_START);
-        this.getContentPane().add(max,BorderLayout.LINE_END );
 
+        this.getContentPane().add(value, BorderLayout.PAGE_END);
+        this.getContentPane().add(min, BorderLayout.LINE_START);
+        this.getContentPane().add(max, BorderLayout.LINE_END);
 
 
     }
+
+
+    /** ~~~~~~~~~~~~~ Event Functions ~~~~~~~~~~~~~~~~~~ * */
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        JSlider source = (JSlider) e.getSource();
+        if (source != null) sliderChange(source.getValue());
+
+
+    }
+
+
+
+    private void sliderChange(int input) {
+
+        System.out.println("\n\nv:" + input +"\tMin :"+minv +"\tMax: "+maxv+ " ::\n");
+        test.setText(" vi = " + input+"\tval :"+(input/100)*maxv+"\n");
+    }
+
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if (e.getSource() == this.min) {
+            String newString = this.min.getText();
+            if (NumberUtils.isNumber(newString)) {
+
+                minv = NumberUtils.toDouble(newString);
+            }
+
+            min.setText("Min: " + minv);
+        } else if (e.getSource() == this.max) {
+            String newString = this.max.getText();
+            if (NumberUtils.isNumber(newString)) {
+
+                maxv = NumberUtils.toDouble(newString);
+            }
+            max.setText("Max: " + maxv);
+        }
+    }
 }
+
+
