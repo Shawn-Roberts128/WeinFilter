@@ -1,3 +1,5 @@
+
+
 package GUI;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -21,7 +23,6 @@ import java.util.Hashtable;
  */
 
 public class Axis extends JFrame implements ChangeListener, ActionListener {
-
     private StringListener textListener;
     private JSlider value;
     private JPanel panel1;
@@ -38,7 +39,7 @@ public class Axis extends JFrame implements ChangeListener, ActionListener {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame.setDefaultLookAndFeelDecorated(false);
+                //JFrame.setDefaultLookAndFeelDecorated(false);
 
                 Axis ax = new Axis("X Axis");
                 ax.getContentPane().setBackground(Color.black);
@@ -126,13 +127,14 @@ public class Axis extends JFrame implements ChangeListener, ActionListener {
     }
 
 
-    /** ~~~~~~~~~~~~~ Event Functions ~~~~~~~~~~~~~~~~~~ * */
+    /** ~~~~~~~~~~~~~ Event Functions ~~~~~~~~~~~~~~~~~~ **/
+
+
+
     @Override
     public void stateChanged(ChangeEvent e) {
         JSlider source = (JSlider) e.getSource();
         if (source != null) sliderChange(source.getValue());
-
-
     }
 
 
