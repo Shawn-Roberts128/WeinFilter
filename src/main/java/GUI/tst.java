@@ -12,8 +12,15 @@ import java.awt.event.ActionListener;
  */
 public class tst {
     private JPanel panel1;
+    private SSlider SSlider1;
+    private JSlider slider1;
+    private JSlider slider2;
+    private JSlider slider3;
+    private JSlider slider4;
+    private JSlider slider5;
+    private JSlider slider6;
+    private JTextField textField1;
     private JButton position;
-    private JButton velocity;
 
     public tst() {
         position.addActionListener(new ActionListener() {
@@ -25,5 +32,9 @@ public class tst {
                 }
             }
         });
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }
