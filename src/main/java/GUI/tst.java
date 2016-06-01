@@ -27,7 +27,7 @@ public class tst {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (actionEvent.getSource() == position ) {
-                    Axis position = new Axis("Position");
+                    //Axis position = new Axis("Position");
                     System.out.println("press");
                 }
             }

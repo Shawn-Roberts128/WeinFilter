@@ -13,6 +13,7 @@ import javax.swing.*;
 
 public class UI extends JFrame {
 
+
     // Main
     public static void main(String[] args) {
 
@@ -42,7 +43,8 @@ public class UI extends JFrame {
         this.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
         setmenuBar();
-        setbuttons();
+        addLeftFrame();
+        addRightFrame();
 
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -56,6 +58,9 @@ public class UI extends JFrame {
         this.setSize(screenSize.width/2, screenSize.height/2);
         this.setLocationRelativeTo(null);
     }
+
+
+
 
     private void setbuttons() {
         JPanel startCond = new JPanel(new SpringLayout());
@@ -111,5 +116,70 @@ public class UI extends JFrame {
         this.getContentPane().add(menuBar, BorderLayout.PAGE_START);
     }
 
+
+    private void addLeftFrame() {
+        int row = 10;
+        int col = 2;
+        JPanel left = new JPanel(new GridLayout(0 , col, 5, 5));
+        this.getContentPane().add(left, BorderLayout.LINE_START);
+
+
+        // New custom values
+        SetPartical part = new SetPartical();
+        left.add(part);
+
+        // Add Pre-made
+        String [] preSet =
+                new String[]{   "Electron",
+                                "Proton",
+                                "Neutron",
+                                "Alpha",
+                                "Beta",
+                                "Gama"};
+
+        JComboBox partList = new JComboBox(preSet);
+        partList.setSelectedIndex(0);
+        //partList.addActionListener(this);
+        left.add(partList);
+
+
+        JLabel vel = new JLabel("Initial Velocity");
+        JLabel pos = new JLabel("Initial Position");
+
+        left.add(pos);
+        left.add(vel);
+
+        // make initial Position
+
+        SSlider [] position = new SSlider[3];
+        position[0]= new SSlider("X_0");
+        position[1]= new SSlider("Y_0");
+        position[2]= new SSlider("Z_0");
+
+        // make initial Velocity
+        SSlider[] velolcity = new SSlider[3];
+        velolcity[0] = new SSlider("V_x0");
+        velolcity[1] = new SSlider("V_y0");
+        velolcity[2] = new SSlider("V_z0");
+
+        for (int i = 0; i < 3; ++i){
+            left.add(position[i]);
+            left.add(velolcity[i]);
+        }
+
+
+
+
+    }
+
+    private void addRightFrame(){
+
+        JPanel right = new JPanel();
+        right.setVisible(true);
+        right.setSize(100, 100);
+        right.setBackground(Color.RED);
+        this.getContentPane().add(right);
+
+    }
 }
 

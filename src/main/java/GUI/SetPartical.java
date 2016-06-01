@@ -30,7 +30,7 @@ public class SetPartical extends JPanel implements ActionListener {
             @Override
             public void run() {
 
-                JFrame here = new JFrame("Here") {
+                new JFrame("Here") {
                     {
 
                         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
