@@ -50,7 +50,7 @@ public class Particle {
 
     }
 
-    Coord3d pathCord(){
+    public Coord3d pathCord(){
 
         return new Coord3d(this.position.x, this.position.y,this.position.z);
 
