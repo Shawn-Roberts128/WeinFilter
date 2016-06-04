@@ -5,6 +5,12 @@ package GUI; /**
  * Good tutorial :: https://www.youtube.com/watch?v=G4jMzEGMKfg
  */
 
+import Model.Cord;
+import Model.Initialised;
+import Model.Particle;
+import Model.WeinFilter;
+import org.jzy3d.maths.Coord3d;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +19,7 @@ import javax.swing.*;
 
 public class UI extends JFrame {
 
+    private Simulation sim;
 
     // Main
     public static void main(String[] args) {
@@ -24,6 +31,7 @@ public class UI extends JFrame {
                 JFrame.setDefaultLookAndFeelDecorated( false );
 
                 UI ex = new UI(" What up ");
+
                 ex.getContentPane().setBackground( Color.black );
                 ex.setVisible(true);
             }
@@ -33,8 +41,13 @@ public class UI extends JFrame {
     // The GUI.UI class
     public UI(String string) {
         super(string);
+        sim = new Simulation();
 
+
+
+        //sim.setTime();
         initUI();
+
     }
 
     // init the starts imitation of the window
@@ -54,7 +67,8 @@ public class UI extends JFrame {
         this.repaint();
 
         this.setVisible(true);
-        this.pack();this.revalidate();
+        this.pack();
+        this.revalidate();
         this.setSize(screenSize.width/2, screenSize.height/2);
         this.setLocationRelativeTo(null);
     }
@@ -62,21 +76,7 @@ public class UI extends JFrame {
 
 
 
-    private void setbuttons() {
-        JPanel startCond = new JPanel(new SpringLayout());
-        startCond.setBackground(Color.RED);
 
-
-        JButton clickMe = new JButton("ClickME");
-        clickMe.setBackground( Color.BLUE );
-        startCond.add(clickMe);
-
-        //this.getContentPane().add(label,BorderLayout.CENTER);
-        //this.getContentPane().add(clickMe, BorderLayout.PAGE_END);
-        startCond.setVisible(true);
-        this.getContentPane().add(startCond, BorderLayout.LINE_START);
-
-    }
 
     private void setmenuBar() {
         // add the quit button
@@ -98,6 +98,12 @@ public class UI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Print out file");
+                try {
+                    testRightFrame();
+                } catch (Initialised initialised) {
+                    initialised.printStackTrace();
+                }
+                //initUI();
                 //TODO add the save file as .txt
             }
         });
@@ -175,11 +181,60 @@ public class UI extends JFrame {
     private void addRightFrame(){
 
         JPanel right = new JPanel();
+
+        right.add(sim);
+
         right.setVisible(true);
-        right.setSize(100, 100);
+        right.setSize(400, 400);
         right.setBackground(Color.RED);
-        this.getContentPane().add(right);
+        this.getContentPane().add(sim);
 
     }
+
+    public void testRightFrame() throws Initialised {
+
+        // Initialisation
+        int size = 10000;
+
+        int electric = 1;
+        int magnetic = 1;
+
+        double mass = 1.0;
+        double charge = 1.0;
+
+        Cord not = new Cord(0, 0, 0);
+
+        // Cord vel = new Cord(0, 1, 0); // number 1 test should be a line
+        // Cord vel = new Cord(0, 1, 1); // test should be a "bouncing ball"
+        Cord vel = new Cord(1, 0, 0);    // test should be a spiral
+
+        // Make filter object
+        WeinFilter filter = new WeinFilter( magnetic, electric);
+        filter.init(new Particle( not,vel,not, mass,charge));
+
+        // Time and trajectory
+        double [] timeLine = new double [size];
+        double time = 0.01;
+
+        for (int i = 0; i < size; ++i){
+            timeLine[i] = i*time;
+        }
+
+        Particle [] traj = filter.trajectory(timeLine);
+        Coord3d [] points = new Coord3d[size];
+
+        // convert the trajectory to cords to be plotted
+        for (int i = 0; i < size ; ++i) {
+
+            points[i] = traj[i].pathCord();
+
+            // used to output the points
+            // System.out.println("T: "+ timeLine[i]+"\tP: "+points[i]);
+        }
+
+        sim.setTime(points);
+        this.revalidate();
+    }
+
 }
 

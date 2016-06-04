@@ -87,6 +87,7 @@ public class Cord {
         System.out.print( " (" + this.x + ", " + this.y + ", " + this.z+")");
     }
 
+
     @Override
     public String toString() {
         return new String("("+this.x+", "+this.y+", "+this.z+")");

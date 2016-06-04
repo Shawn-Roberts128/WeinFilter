@@ -44,6 +44,10 @@ public class Particle {
 
     }
 
+    public static Particle NaN (){
+        return new Particle();
+    }
+
     @Override
     public String toString() {
         return super.toString();

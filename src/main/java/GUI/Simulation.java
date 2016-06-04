@@ -1,27 +1,17 @@
 package GUI;
 
-
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.SwingChart;
-
-import org.jzy3d.chart.factories.SwingChartComponentFactory;
-import org.jzy3d.colors.*;
-import org.jzy3d.colors.colormaps.ColorMapRainbow;
-import org.jzy3d.maths.Coord3d;
-import org.jzy3d.maths.Range;
-import org.jzy3d.plot3d.builder.Builder;
-import org.jzy3d.plot3d.builder.Mapper;
-import org.jzy3d.plot3d.builder.concrete.OrthonormalGrid;
+import org.jzy3d.maths.*;
 import org.jzy3d.plot3d.primitives.*;
 import org.jzy3d.plot3d.primitives.Point;
-import org.jzy3d.plot3d.primitives.Shape;
-import org.jzy3d.plot3d.rendering.canvas.CanvasSwing;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
-
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
 /**
@@ -30,7 +20,7 @@ import java.awt.Color;
  * <p/>
  * Purpose ::
  */
-public class Simulation extends JPanel{
+public class Simulation extends JPanel implements ActionListener{
     private LineStrip time;
     private Chart space;
 
@@ -46,26 +36,18 @@ public class Simulation extends JPanel{
                 new JFrame("Here") {
                     {
 
+
+
                         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                         this.getContentPane().setLayout(new BorderLayout());
 
-
                         this.getContentPane().setBackground(Color.BLUE);
 
-
                         Simulation sim = new Simulation();
-                        Coord3d [] line  = new Coord3d[3];
-                        line[0] = new Coord3d(0,0,0);
-                        line[1] = new Coord3d(0,0,1);
-                        line[2] = new Coord3d(0,1,1);
-                        //sim.setTime(line);
-                        sim.draw();
 
-                        this.getContentPane().add(new Simulation(),BorderLayout.CENTER);
-
+                        this.getContentPane().add(sim,BorderLayout.CENTER);
 
                         this.setVisible(true);
-
 
                         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -73,6 +55,7 @@ public class Simulation extends JPanel{
                         this.revalidate();
                         this.setSize(screenSize.width / 4, screenSize.height / 4);
                         this.setLocationRelativeTo(null);
+
                     }
 
                 };
@@ -84,52 +67,121 @@ public class Simulation extends JPanel{
 
     }
 
-    private void draw() {
-         // Define a function to plot
-        Mapper mapper = new Mapper() {
-            public double f(double x, double y) {
-                return 10 * Math.sin(x / 10) * Math.cos(y / 20) * x;
-            }
-        };
 
-// Define range and precision for the function to plot
-        Range range = new Range(-150, 150);
-        int steps = 50;
-
-// Create a surface drawing that function
-        Shape surface = Builder.buildOrthonormal(new OrthonormalGrid(range, steps, range, steps), mapper);
-        surface.setColorMapper(new ColorMapper());
-        surface.setFaceDisplayed(true);
-        surface.setWireframeDisplayed(false);
-        surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
-
-
-        space.getScene().getGraph().add(surface);
-        this.add((javax.swing.JComponent)space.getCanvas());
-    }
-
+    /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Constructor ~~~~~~~~~~~~~~~~~~~~~~~~ **/
     public Simulation() {
         super( new BorderLayout());
-        space = SwingChartComponentFactory.chart("swing");//new SwingChart(Quality.Nicest);
-        this.time = new LineStrip();
-        this.add((javax.swing.JComponent) space.getCanvas());
+        this.setBackground(Color.RED);
+
+
+        space = new SwingChart (Quality.Nicest){};
+        time = new LineStrip();
+
+        space.addMouseController();
+        space.addKeyController();
+        space.getView();
+        this.box(0.5,0.5,0.5);
+
+
+        JComponent canvas = (JComponent) space.getCanvas();
+        this.add(canvas, BorderLayout.CENTER);
     }
 
 
 
+
+
+    /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Other Functions ~~~~~~~~~~~~~~~~~~~~~~~~ **/
     public void setTime(Coord3d [] time){
 
         this.space.removeDrawable(this.time);
         this.time.clear();
 
         for (int i = 0; i < time.length; ++i){
-            this.time.add(new Point(time[i]));
+            this.time.add(new Point(time[i], org.jzy3d.colors.Color.BLACK));
         }
 
-        space.getScene().add(this.time);
-        space.render();
+        space.add(this.time);
+        space.getView().setMaximized(true);
+
+
+
 
     }
+    public void setTime(){
+        Coord3d [] line  = new Coord3d[3];
+        line[0] = new Coord3d(-1,0,0);
+        line[1] = new Coord3d(0,0,1);
+        line[2] = new Coord3d(0,1,1);
+        this.setTime(line);
+    }
+
+    public void box( double hight, double width, double depth){
+
+        hight=hight/2;
+        width=width/2;
+        depth=depth/2;
+
+        Coord3d [] boxPoints = genBoxCords( hight, width, depth);
+
+        space.add(new Point(boxPoints[0], org.jzy3d.colors.Color.RED)  ) ;
+        for (int i = 1; i < 9 ; ++ i){
+
+            space.add(new Point(boxPoints[i], org.jzy3d.colors.Color.BLUE)  ) ;
+        }
+
+
+
+
+        addLine( boxPoints[1], boxPoints[2], org.jzy3d.colors.Color.BLUE);
+        addLine( boxPoints[1], boxPoints[3], org.jzy3d.colors.Color.BLUE);
+        addLine( boxPoints[1], boxPoints[5], org.jzy3d.colors.Color.BLUE);
+
+        addLine( boxPoints[2], boxPoints[4], org.jzy3d.colors.Color.BLUE);
+        addLine( boxPoints[2], boxPoints[6], org.jzy3d.colors.Color.BLUE);
+
+        addLine( boxPoints[3], boxPoints[4], org.jzy3d.colors.Color.BLUE);
+        addLine( boxPoints[3], boxPoints[7], org.jzy3d.colors.Color.BLUE);
+
+        addLine( boxPoints[4], boxPoints[8], org.jzy3d.colors.Color.BLUE);
+
+        addLine( boxPoints[5], boxPoints[6], org.jzy3d.colors.Color.BLUE);
+        addLine( boxPoints[5], boxPoints[7], org.jzy3d.colors.Color.BLUE);
+
+        addLine( boxPoints[6], boxPoints[8], org.jzy3d.colors.Color.BLUE);
+
+        addLine( boxPoints[7], boxPoints[8], org.jzy3d.colors.Color.BLUE);
+
+    }
+
+    private Coord3d[] genBoxCords(double x, double y, double z){
+        Coord3d [] boxPoints = new Coord3d[9];
+        boxPoints[0] = new Coord3d(   0,   0,   0);
+        boxPoints[1] = new Coord3d(x* 1,y*-1,z* 1);
+        boxPoints[2] = new Coord3d(x* 1,y* 1,z* 1);
+        boxPoints[3] = new Coord3d(x* 1,y*-1,z*-1);
+        boxPoints[4] = new Coord3d(x* 1,y* 1,z*-1);
+        boxPoints[5] = new Coord3d(x*-1,y*-1,z* 1);
+        boxPoints[6] = new Coord3d(x*-1,y* 1,z* 1);
+        boxPoints[7] = new Coord3d(x*-1,y*-1,z*-1);
+        boxPoints[8] = new Coord3d(x*-1,y* 1,z*-1);
+        return boxPoints;
+    }
+
+    private void addLine(Coord3d a, Coord3d b, org.jzy3d.colors.Color color){
+
+        space.add(new LineStrip(new Point(a, color),
+                new Point(b, color)));
+    }
+
+    /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Other Functions ~~~~~~~~~~~~~~~~~~~~~~~~ **/
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        System.out.println("\nGraph change\n");
+
+    }
+
 
 
 
