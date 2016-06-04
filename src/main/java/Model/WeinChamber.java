@@ -84,6 +84,18 @@ public class WeinChamber extends WeinFilter{
         this.length = length;
     }
 
+    /**
+     * Copy Constructor used to switch filters
+     *
+     * @param from
+     *         The Chamber being switch from
+     */
+    public WeinChamber( WeinFilter from, double length, double radius) {
+        super(from);
+        this.length = length;
+        this.radius = radius;
+    }
+
     /** Trajectory :: takes in an array of floats and computes the trajectory over that time interval
      *      This outputs an array of points, representing the particle's information at that given moment.
      *      If there is a collision with a wall then it stops and outputs NaN for the remaining values

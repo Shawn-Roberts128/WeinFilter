@@ -87,6 +87,12 @@ public class Cord {
         System.out.print( " (" + this.x + ", " + this.y + ", " + this.z+")");
     }
 
+    public boolean isequal(Cord from ){
+        if (this.x != from.x) return false;
+        if (this.y != from.y) return false;
+        if (this.z != from.z) return false;
+        return true;
+    }
 
     @Override
     public String toString() {

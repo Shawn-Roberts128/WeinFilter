@@ -105,6 +105,23 @@ public class WeinFilter {
 
     }
 
+
+    /** Copy Constructor used to switch filters
+     *
+     * @param from  The Chamber being switch from
+     */
+    public WeinFilter(WeinFilter from) {
+        this.magnetic = from.magnetic;
+        this.electric = from.electric;
+        this.c1 = from.c1;
+        this.c2 = from.c2;
+        this.c3 = from.c3;
+        this.c4 = from.c4;
+        this.w = from.w;
+        this.fleck = from.fleck;
+        this.init = from.init;
+    }
+
     /** Setters and Getters **/
     public double getMagnetic() {
         return magnetic;

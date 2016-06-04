@@ -18,11 +18,11 @@ package Model;
 public class VoltAccel {
 
     /** Fields **/
-    private double electric = 0;    // positive is + y, negative is -y direction of field
-    private Particle fleck = null;     // the Particle  to be accelerated
-    private double leftVolt = 0;    // the voltage on the left plate ( - y side)
-    private double rightVolt = 0;   // the voltage on the right play ( + y side);
-    private boolean init = false;
+    protected double electric = 0;    // positive is + y, negative is -y direction of field
+    protected Particle fleck = null;     // the Particle  to be accelerated
+    protected double leftVolt = 0;    // the voltage on the left plate ( - y side)
+    protected double rightVolt = 0;   // the voltage on the right play ( + y side);
+    protected boolean init = false;
 
 
     /** Test Main **/
@@ -49,6 +49,14 @@ public class VoltAccel {
         this.electric = rightVolt - leftVolt; // initialise the electric field
         fleck = null;
         init = false;
+    }
+
+    public VoltAccel(VoltAccel from) {
+        this.electric = from.electric;
+        this.fleck = from.fleck;
+        this.leftVolt = from.leftVolt;
+        this.rightVolt = from.rightVolt;
+        this.init = from.init;
     }
 
     public void setFleck(Particle fleck) {
@@ -84,7 +92,7 @@ public class VoltAccel {
      * @return a particle at the given time
      * @throws Initialised
      */
-    private Particle instant (double time ) throws Initialised {
+    protected Particle instant (double time ) throws Initialised {
         if ( !init ) throw new Initialised("Value Not Initialised");
 
         this.electric = rightVolt - leftVolt; // reset the Electric field
