@@ -92,7 +92,7 @@ public class VoltAccel {
      * @return a particle at the given time
      * @throws Initialised
      */
-    protected Particle instant (double time ) throws Initialised {
+    public Particle instant (double time ) throws Initialised {
         if ( !init ) throw new Initialised("Value Not Initialised");
 
         this.electric = rightVolt - leftVolt; // reset the Electric field

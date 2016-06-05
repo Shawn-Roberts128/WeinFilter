@@ -106,6 +106,12 @@ public class Cord {
         return new Cord( mul*this.x, mul*this.y, mul*this.z );
     }
 
+    public double len(){
+        return Math.sqrt(Math.pow(x,2) +Math.pow(y,2) +Math.pow(z,2));
+    }
+    public double lenXZ(){
+        return Math.sqrt(Math.pow(x,2) +Math.pow(z,2));
+    }
     public void disp(){
 
         System.out.print( " (" + this.x + ", " + this.y + ", " + this.z+")");

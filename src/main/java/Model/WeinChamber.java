@@ -95,6 +95,16 @@ public class WeinChamber extends WeinFilter{
         this.length = length;
         this.radius = radius;
     }
+    @Override
+    public Particle instant(double time) throws Initialised {
+        Particle now = super.instant(time);
+
+        if ((now.position.y > length)||(now.position.lenXZ()< radius))
+            now = Particle.NaN();
+
+        return now;
+    }
+
 
     /** Trajectory :: takes in an array of floats and computes the trajectory over that time interval
      *      This outputs an array of points, representing the particle's information at that given moment.
@@ -115,7 +125,6 @@ public class WeinChamber extends WeinFilter{
 
             Particle traj[] = new Particle[time.length];
             traj[0] = new Particle(fleck);
-            double rad =0 ;
 
             // compute the values at the given time
             for (i = 0; i < time.length; ++i) {
@@ -123,8 +132,7 @@ public class WeinChamber extends WeinFilter{
                 traj[i] = instant(time[i]);
 
                 // Check for collision
-                rad = Math.sqrt(Math.pow(traj[i].position.x,2)+Math.pow(traj[i].position.z,2));
-                if ((traj[i].position.y > length) || ( rad > radius))
+                if ((traj[i].position.y > length) || ( traj[i].position.lenXZ() > radius))
                     throw new Colision(traj);
             }
 
@@ -139,5 +147,21 @@ public class WeinChamber extends WeinFilter{
             return colision.traj;
         }
 
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 }

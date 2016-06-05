@@ -2,7 +2,10 @@ package Controler;
 
 import Model.*;
 
+import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Range;
+
+import java.util.LinkedList;
 
 /**
  * By: Shawn Roberts For: CS 202 Projects
@@ -15,10 +18,14 @@ import org.jzy3d.maths.Range;
     private VoltAccel stage = null;
     private boolean preAcc = false;
     private double centerX = 0;
-    private double centerY = 0;
-    private double rad = 1;
+    private double centerZ = 0;
+    private double radius = 1;
     private Particle intial = null;          // initial position of the Particle
     private Particle stopGap= null;          // position of the Particle before the Chamber
+
+    private double timeEnd= 10;
+    private double dtime = 1;
+    private int numSteps = 1;
 
 
 
@@ -30,98 +37,70 @@ import org.jzy3d.maths.Range;
     }
 
 
+
+
+
     /**
      * @return
-     */
-    public boolean setToIdealChamber(){
-        if (this.chamber == null){
-            this.chamber = new WeinFilter(0d, 0d);
-            return true;
-        }
-        else if (this.chamber.getClass() == WeinChamber.class) { // needs to switch
-            this.chamber = new WeinFilter(this.chamber);
-            return true;
-        }
-        else if (this.chamber.getClass() == WeinFilter.class) // no need to switch
-            return true;
-        else return false;
-    }
-
-
-    /**
-     * @param length
-     * @param radius
      *
-     * @return
+     * @throws Initialised
      */
-    public boolean setToRealChamber( double length , double radius){
-        if (this.chamber == null){
-            this.chamber = new WeinChamber(0d,0d,radius,length);
-            return true;
+    public Coord3d [] run () throws Initialised{
+
+        if (! preAcc) {     // for simple filter
+            return runSimple();
+            
+        }else {             // Cambered filter
+            
+            return runChamber();
         }
-        else if (this.chamber.getClass() == WeinFilter.class) { // Need to witch
-            this.chamber = new WeinChamber(this.chamber,radius,length);
-            return true;
-        }
-        else if (this.chamber.getClass() == WeinFilter.class) // no need to switch
-            return true;
-        else return false;
     }
-
-
-    /**
-     * @return
-     */
-    public boolean setToIdealAcc(){
-        if (this.stage == null) {
-            this.stage = new VoltAccel(0d, 0d);
-            return true;
+    
+    public Coord3d [] runSimple() throws Initialised {
+        double[] time = new double[numSteps];
+        for (int i = 0 ; i < numSteps; ++i){
+            time[i] = dtime *(double)i;
         }
-        else if ( stage.getClass()== AccelBox.class )    // Need to change
-        {
-            this.stage = new VoltAccel( this.stage);
-            return true;
-        }
-        else if (stage.getClass() == VoltAccel.class)     // no need to change
-            return true;
-        else
-            return false;
+
+        return toCoords(run(time));
     }
+    public Coord3d[]  runChamber() throws Initialised {
+        Particle nan = Particle.NaN();
+        double time = 0;
+        LinkedList <Particle> traj = new LinkedList<Particle>();
+        Particle next  = chamber.instant(time);
 
-    /**
-     * @param height
-     * @param width
-     * @param depth
-     *
-     * @return
-     */
-    public boolean setToRealAcc(float height, float width, float depth){
-        if (this.stage == null) {
-            this.stage = new AccelBox(0d,0d,new Range(-depth,depth), new Range(-width,width), new Range(-height,height) );
-            return true;
-        }
-        else if ( stage.getClass()== VoltAccel.class )    // Need to change
-        {
-            this.stage = new AccelBox( this.stage,  new Range( -height, height ),
-                    new Range( -width, width ),
-                    new Range( -depth, depth ));
-            return true;
-        }
-        else if (stage.getClass() == AccelBox.class)     // no need to change
-            return true;
-        else
-            return false;
-    }
+        // run though accelerator
+        while (!next.isequal(nan)) {
+            traj.addFirst(next);
+            time += dtime;
+            next  = stage.instant(time);
 
-    /**
-     * @param centerX
-     * @param centerY
-     * @param rad
-     */
-    public void updateHole( double centerX, double centerY, double rad){
-        this.centerX = centerX;
-        this.centerY = centerY;
-        this.rad = rad;
+            if (((AccelBox)stage).collision(next))
+                next = Particle.NaN();
+
+        }
+        /** check if it is inside of valid regen **/
+
+        // get the difference between the hole and the position of the particle in the box
+        Cord pos = traj.get(0).getPosition().add(new Cord(this.centerX, 0, this.centerZ).neg());
+        if ( pos.len() < this.radius ) {
+
+
+            // compute the Filter set
+            time = 0;
+            chamber.init(this.stopGap);
+            next = chamber.instant(time);
+            next = ((WeinChamber) chamber).instant(time);
+            while ( !next.isequal(nan)){
+                traj.add(next);
+                time += dtime;
+                next = ((WeinChamber) chamber).instant(time);
+            }
+
+        }
+        return toCoords((Particle [])traj.toArray());
+
     }
 
     /** Run     :: Gets the total trajectory of the Particle through the entire thing
@@ -211,6 +190,112 @@ import org.jzy3d.maths.Range;
         return tooBig;
     }
 
+    /**
+     * @param traj
+     *
+     * @return
+     */
+    public Coord3d [] toCoords (Particle [] traj){
+        Coord3d [] cTraj = new Coord3d[traj.length];
+        for (int i = 0 ; i < traj.length; ++i){
+            cTraj[i] = traj[i].pathCord();
+        }
+
+        return cTraj;
+    }
+ /**
+     * @return
+     */
+    public boolean setToIdealChamber(){
+        if (this.chamber == null){
+            this.chamber = new WeinFilter(0d, 0d);
+            return true;
+        }
+        else if (this.chamber.getClass() == WeinChamber.class) { // needs to switch
+            this.chamber = new WeinFilter(this.chamber);
+            return true;
+        }
+        else if (this.chamber.getClass() == WeinFilter.class) // no need to switch
+            return true;
+        else return false;
+    }
+
+
+    /**
+     * @param length
+     * @param radius
+     *
+     * @return
+     */
+    public boolean setToRealChamber( double length , double radius){
+        if (this.chamber == null){
+            this.chamber = new WeinChamber(0d,0d,radius,length);
+            return true;
+        }
+        else if (this.chamber.getClass() == WeinFilter.class) { // Need to witch
+            this.chamber = new WeinChamber(this.chamber,radius,length);
+            return true;
+        }
+        else if (this.chamber.getClass() == WeinFilter.class) // no need to switch
+            return true;
+        else return false;
+    }
+
+
+    /**
+     * @return
+     */
+    public boolean setToIdealAcc(){
+        if (this.stage == null) {
+            this.stage = new VoltAccel(0d, 0d);
+            return true;
+        }
+        else if ( stage.getClass()== AccelBox.class )    // Need to change
+        {
+            this.stage = new VoltAccel( this.stage);
+            return true;
+        }
+        else if (stage.getClass() == VoltAccel.class)     // no need to change
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * @param height
+     * @param width
+     * @param depth
+     *
+     * @return
+     */
+    public boolean setToRealAcc(float height, float width, float depth){
+        if (this.stage == null) {
+            this.stage = new AccelBox(0d,0d,new Range(-depth,depth), new Range(-width,width), new Range(-height,height) );
+            return true;
+        }
+        else if ( stage.getClass()== VoltAccel.class )    // Need to change
+        {
+            this.stage = new AccelBox( this.stage,  new Range( -height, height ),
+                    new Range( -width, width ),
+                    new Range( -depth, depth ));
+            return true;
+        }
+        else if (stage.getClass() == AccelBox.class)     // no need to change
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * @param centerX
+     * @param centerY
+     * @param rad
+     */
+    public void updateHole( double centerX, double centerY, double rad){
+        this.centerX = centerX;
+        this.centerZ = centerY;
+        this.radius = rad;
+    }
     public WeinFilter getChamber() {
         return chamber;
     }
@@ -235,20 +320,20 @@ import org.jzy3d.maths.Range;
         this.centerX = centerX;
     }
 
-    public double getCenterY() {
-        return centerY;
+    public double getCenterZ() {
+        return centerZ;
     }
 
-    public void setCenterY(double centerY) {
-        this.centerY = centerY;
+    public void setCenterZ(double centerZ) {
+        this.centerZ = centerZ;
     }
 
-    public double getRad() {
-        return rad;
+    public double getRadius() {
+        return radius;
     }
 
-    public void setRad(double rad) {
-        this.rad = rad;
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 
     public Particle getIntial() {
@@ -260,16 +345,19 @@ import org.jzy3d.maths.Range;
     }
 
 
-    public void setAccelBox(double v) {//TODO add
-
+    public void setAccelBox(double vi) {//TODO add
+        float v= (float)vi;
+        ((AccelBox)this.stage).setX(new Range(-v, v));
+        ((AccelBox)this.stage).setY(new Range(-v, v));
+        ((AccelBox)this.stage).setZ(new Range(-v, v));
     }
 
     public void setChamberRad(double v) {
-        
+        ((WeinChamber)this.chamber).setRadius( v);
     }
 
     public void setChamberLen(double v) {
-
+        ((WeinChamber)this.chamber).setLength( v);
     }
 }
 
