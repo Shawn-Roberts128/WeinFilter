@@ -236,7 +236,7 @@ public class WeinFilter {
      * @return a particle at the given time
      * @throws Initialised
      */
-    protected Particle instant(double time) throws Initialised {
+    public Particle instant(double time) throws Initialised {
         if (!init) throw new Initialised(" Constants not initialised");
 
         double e_b = this.electric / this.magnetic ;  // calculations the e_b value

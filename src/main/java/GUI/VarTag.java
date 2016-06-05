@@ -1,14 +1,17 @@
 package GUI;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
-/**     +++++++++++++++++++++++++ SubPanel Class +++++++++++++++++++++++++      **/
-public class VarTag extends JPanel {
+/** +++++++++++++++++++++++++ SubPanel Class +++++++++++++++++++++++++      **/
+public abstract class VarTag extends JPanel implements ActionListener{
 
     protected String title;
     protected JLabel label;
-    protected JTextField inputIn;
+    public  JTextField input;
 
 
     /** ~~~~~~~~~~~~~~~~~~~ Initialisation and Constructor ~~~~~~~~~~~~~~~~~~~~~ **/
@@ -23,12 +26,15 @@ public class VarTag extends JPanel {
     private void init( double val) {
 
         this.label = new JLabel(this.title);
-        this.inputIn = new JTextField(String.format("%s", val));
+        this.input = new JTextField(String.format("%s", val));
 
         this.add(label);
-        this.add(inputIn);
+        this.add(input);
     }
 
+    public double getVal(){
+        return NumberUtils.toDouble(this.input.getText());
+    }
 
     /** ~~~~~~~~~~~~~ Event Functions ~~~~~~~~~~~~~~~~~~ **/
 

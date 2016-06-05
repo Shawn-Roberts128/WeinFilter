@@ -1,5 +1,6 @@
 package GUI;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import javax.swing.*;
@@ -13,15 +14,17 @@ import java.awt.event.ActionListener;
  * <p/>
  * Purpose ::
  */
-public class SetPartical extends JPanel implements ActionListener {
+public abstract class SetPartical extends JPanel implements ActionListener, DoubleListener {
 
     public double mass;
     public double charge;
 
-    private JLabel title    = null;
-    private VarTag massIn   = null;
+    private JLabel title   = null;
 
-    private VarTag chargeIn = null ;
+    public VarTag massIn   = null;
+    public VarTag chargeIn = null;
+
+    public DoubleListener doubleListener = null;
 
     /** test Main **/
 
@@ -39,7 +42,23 @@ public class SetPartical extends JPanel implements ActionListener {
 
                         this.getContentPane().setBackground(Color.BLUE);
 
-                        this.getContentPane().add(new SetPartical());
+                        this.getContentPane().add(new SetPartical(){
+
+                            @Override
+                            public void doubleEmmited(double value, ActionEvent event) {
+                                if (event.getSource() == this.massIn.input){
+                                    this.mass = value;
+                                    System.out.println("Mass :: "+ value);
+                                }
+                                else if (this.chargeIn.input == event.getSource()){
+                                    this.charge = value;
+                                    System.out.println("Charge :: "+ value);
+                                }
+                                else{
+                                    System.out.println(event.toString() +" " +value);
+                                }
+                            }
+                        });
 
 
                         this.setVisible(true);
@@ -69,6 +88,13 @@ public class SetPartical extends JPanel implements ActionListener {
     }
     public SetPartical(double mass, double charge ){
 
+        this.doubleListener = new DoubleListener() {
+            @Override
+            public void doubleEmmited(double value, ActionEvent event) {
+                getDoubleListener().doubleEmmited(value,event);
+            }
+        };
+
         this.mass       = mass;
         this.charge     = charge;
 
@@ -93,14 +119,25 @@ public class SetPartical extends JPanel implements ActionListener {
 
     /** ~~~~~~~~~~~~~ Content Functions ~~~~~~~~~~~~~~~~~~~~**/
     private void makeCharge() {
-        this.chargeIn = new VarTag("Charge", this.charge);
-        this.chargeIn.inputIn.addActionListener(this);
+        this.chargeIn = new VarTag("Charge", this.charge){
+
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                doubleListener.doubleEmmited(this.getVal(), actionEvent);
+            }
+        };
+        this.chargeIn.input.addActionListener(this);
         this.add(this.chargeIn, Component.CENTER_ALIGNMENT);
     }
 
     private void makeMass() {
-        this.massIn = new VarTag("Mass", this.mass);
-        this.massIn.inputIn.addActionListener(this);
+        this.massIn = new VarTag("Mass", this.mass) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                doubleListener.doubleEmmited(this.getVal(), actionEvent);
+            }
+        };
+        this.massIn.input.addActionListener(this);
         this.add(this.massIn, Component.CENTER_ALIGNMENT);
     }
 
@@ -108,27 +145,20 @@ public class SetPartical extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        String newString = null;
-        if (e.getSource() == this.massIn.inputIn){
-            newString = this.massIn.inputIn.getText();
-
-            if (NumberUtils.isNumber(newString)){
-                this.mass = NumberUtils.toDouble(newString);
-            }
-
-        }
-        else if (e.getSource() == this.chargeIn.inputIn){
-            newString = this.massIn.inputIn.getText();
-
-            if (NumberUtils.isNumber(newString)){
-                this.charge = NumberUtils.toDouble(newString);
-            }
-        }
-
-        System.out.println("Change"+ newString); //TODO delete
-
+        if (e.getSource()==massIn.input)
+            this.doubleEmmited(massIn.getVal(), e);
+        else if (e.getSource()==chargeIn.input)
+            this.doubleEmmited(chargeIn.getVal(), e);
+        else
+            System.out.println(e.getSource().toString());
     }
 
+    public DoubleListener getDoubleListener() {
+        return doubleListener;
+    }
+
+    public void setDoubleListener(DoubleListener doubleListener) {
+        this.doubleListener = doubleListener;
+    }
 }
 
