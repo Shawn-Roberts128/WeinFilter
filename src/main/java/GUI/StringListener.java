@@ -1,5 +1,7 @@
 package GUI;
 
+import java.awt.event.ActionListener;
+
 /**
  * By: Shawn Roberts
  * For: CS 202 Projects
@@ -9,4 +11,5 @@ package GUI;
  */
 public interface StringListener {
     public void textEmmited(String text);
+
 }
