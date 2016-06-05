@@ -84,4 +84,16 @@ public class AccelBox extends VoltAccel{
         return traj;
     }
 
+    public void setX(Range x) {
+        this.x = x;
+    }
+
+    public void setY(Range y) {
+        this.y = y;
+    }
+
+    public void setZ(Range z) {
+        this.z = z;
+    }
 }
+

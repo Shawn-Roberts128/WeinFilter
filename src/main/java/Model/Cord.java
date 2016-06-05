@@ -13,6 +13,30 @@ public class Cord {
     protected double z = Double.NaN;
 
 
+
+    /**Test main to make sure the
+     *
+     */
+    public static void main( String [] args) {
+
+        Cord a = new Cord( 0.0,1.0,0.0 );
+
+        a.disp();
+        System.out.println("\n ::  Crosses ::  ");
+        System.out.println("\n (1,1,1) ");
+        a.cross(new Cord( 1.0, 1.0 ,1.0  )).disp();
+        System.out.println("\n(0,0,1)");
+        a.cross(new Cord( 0, 0 , 1.0  )).disp();
+
+        System.out.println("\n :: Multiple :: ");
+        System.out.println("\n 0 ");
+        a.mult(0).disp();
+
+        System.out.println("\n 1 ");
+        a.mult(1.0).disp();
+
+    }
+
     /** default
      *
      */
@@ -91,6 +115,7 @@ public class Cord {
         if (this.x != from.x) return false;
         if (this.y != from.y) return false;
         if (this.z != from.z) return false;
+
         return true;
     }
 
@@ -99,27 +124,27 @@ public class Cord {
         return new String("("+this.x+", "+this.y+", "+this.z+")");
     }
 
-    /**Test main to make sure the
-     *
-     */
-    public static void main( String [] args) {
-
-        Cord a = new Cord( 0.0,1.0,0.0 );
-
-        a.disp();
-        System.out.println("\n ::  Crosses ::  ");
-        System.out.println("\n (1,1,1) ");
-        a.cross(new Cord( 1.0, 1.0 ,1.0  )).disp();
-        System.out.println("\n(0,0,1)");
-        a.cross(new Cord( 0, 0 , 1.0  )).disp();
-
-        System.out.println("\n :: Multiple :: ");
-        System.out.println("\n 0 ");
-        a.mult(0).disp();
-
-        System.out.println("\n 1 ");
-        a.mult(1.0).disp();
-
+    public double getX(double v) {
+        return x;
     }
 
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getZ() {
+        return z;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
+    }
 }

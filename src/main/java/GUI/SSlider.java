@@ -16,7 +16,7 @@ import java.util.Hashtable;
  * <p/>
  * Purpose ::
  */
-public class SSlider extends JPanel implements ChangeListener, ActionListener {
+public abstract class SSlider extends JPanel implements ChangeListener, ActionListener {
 
     private StringListener textListener;
     private JSlider value;
@@ -25,6 +25,7 @@ public class SSlider extends JPanel implements ChangeListener, ActionListener {
     private JTextField max;
 
     private JTextArea test;
+
     String val;
     private double minv;
     private double maxv;
@@ -46,7 +47,20 @@ public class SSlider extends JPanel implements ChangeListener, ActionListener {
 
                         this.getContentPane().setBackground(Color.BLUE);
 
-                        this.getContentPane().add(new SSlider("x"));
+                        this.getContentPane().add(new SSlider("x"){
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                this.updateUI();
+                            }
+                            @Override
+                            public void stateChanged(ChangeEvent e)
+                            {
+
+                                JSlider source = (JSlider) e.getSource();
+                                if (source != null) this.sliderChange (source.getValue());
+                            }
+
+                        });
 
 
                         this.setVisible(true);
@@ -112,7 +126,7 @@ public class SSlider extends JPanel implements ChangeListener, ActionListener {
 
     /** ~~~~~~~~~~~~~ Content Functions ~~~~~~~~~~~~~~~~~~~~**/
 
-  private void slider() {
+    private void slider() {
 
         value = new JSlider();
         value.createStandardLabels(1, 0);
@@ -121,6 +135,8 @@ public class SSlider extends JPanel implements ChangeListener, ActionListener {
         value.setPaintTicks(true);
         value.setPaintLabels(true);
         value.setValue(120);
+        value.setMaximum(1000);
+        value.setMinimum(0);
         value.setSize(new Dimension(100, 10));
         value.addChangeListener(this);
 
@@ -129,6 +145,7 @@ public class SSlider extends JPanel implements ChangeListener, ActionListener {
         labelTable.put(500, new JLabel("0.5"));
         labelTable.put(1000, new JLabel("1.0"));
         value.setLabelTable(labelTable);
+        value.setPaintLabels(true);
 
         this.add(value);
     }
@@ -156,11 +173,59 @@ public class SSlider extends JPanel implements ChangeListener, ActionListener {
     public void setTextListener(StringListener textListener) {
         this.textListener = textListener;
     }
+    /*
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if (e.getSource() == this.min) {
+                String newString = this.min.getText();
+                if (NumberUtils.isNumber(newString)) {
+
+                    minv = NumberUtils.toDouble(newString);
+                }
+
+                min.setText("Min: " + minv);
+            } else if (e.getSource() == this.max) {
+                String newString = this.max.getText();
+                if (NumberUtils.isNumber(newString)) {
+
+                    maxv = NumberUtils.toDouble(newString);
+                }
+                max.setText("Max: " + maxv);
+            }
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e)
+        {
+
+            JSlider source = (JSlider) e.getSource();
+            if (source != null) sliderChange(source.getValue());
+        }
+
+        */
+    @Override
+    public void setEnabled ( boolean set) {
+
+        value.setEnabled(set);
+        min.setEnabled(set);
+        max.setEnabled(set);
+
+        test.setEnabled(set);
+    }
+
+    /**
+     * @return
+     */
+    public double valueOf(){
+        return (value.getValue()+minv);
+    }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void updateUI(){
+        super.updateUI();
 
-        if (e.getSource() == this.min) {
+        if (this.min != null) {
             String newString = this.min.getText();
             if (NumberUtils.isNumber(newString)) {
 
@@ -168,7 +233,7 @@ public class SSlider extends JPanel implements ChangeListener, ActionListener {
             }
 
             min.setText("Min: " + minv);
-        } else if (e.getSource() == this.max) {
+        } else if (this.max!= null) {
             String newString = this.max.getText();
             if (NumberUtils.isNumber(newString)) {
 
@@ -176,18 +241,11 @@ public class SSlider extends JPanel implements ChangeListener, ActionListener {
             }
             max.setText("Max: " + maxv);
         }
-    }
 
-    @Override
-    public void stateChanged(ChangeEvent e) {
-
-        JSlider source = (JSlider) e.getSource();
-        if (source != null) sliderChange(source.getValue());
     }
 
 
-    private void sliderChange(int input) {
-
+    public void sliderChange(int input) {
         System.out.println("\n\nv:" + input +"\tMin :"+minv +"\tMax: "+maxv+ " ::\n");
         test.setText(" vi = " + input+"\tval :"+(input/100)*maxv+"\n");
     }
