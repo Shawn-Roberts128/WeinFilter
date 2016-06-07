@@ -16,19 +16,20 @@ import java.util.Hashtable;
  * <p/>
  * Purpose ::
  */
-public abstract class SSlider extends JPanel implements ChangeListener, ActionListener {
+public abstract class SSlider extends JPanel implements ChangeListener, ActionListener, DoubleListener {
 
-    private StringListener textListener;
     private JSlider value;
-    private JPanel panel1;
-    private JTextField min;
-    private JTextField max;
+    private VarTag titleValue;
+    private VarTag minV;
+    private VarTag maxV;
 
-    private JTextField test;
 
-    String val;
-    private double minv;
-    private double maxv;
+    String title;
+    private double min;
+    private double max;
+    private double val;
+    private double  di; // tick value that updates as the things change
+
 
     /** test Main **/
 
@@ -47,19 +48,12 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
 
                         this.getContentPane().setBackground(Color.BLUE);
 
-                        this.getContentPane().add(new SSlider("x"){
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                this.updateUI();
-                            }
-                            @Override
-                            public void stateChanged(ChangeEvent e)
-                            {
+                        this.getContentPane().add(new SSlider("X",5d,0d,10d){
 
-                                JSlider source = (JSlider) e.getSource();
-                                if (source != null) this.sliderChange (source.getValue());
+                            @Override
+                            public void doubleEmmited(double value, ActionEvent event) {
+                                System.out.println(value);
                             }
-
                         });
 
 
@@ -87,10 +81,13 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
     /** ~~~~~~~~~~~~~~~~~~~ Initialisation and Constructor ~~~~~~~~~~~~~~~~~~~~~ **/
 
 
-    public SSlider(String title) {
+    public SSlider(String title, double val, double min, double max) {
         super(new BorderLayout(5,5));
-        val = String.valueOf(title.charAt(0));
-
+        this.title = title;
+        this.val = val;
+        this.min = min;
+        this.max = max;
+        this.updateDi();
 
         initUI();
     }
@@ -102,13 +99,7 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
 
         minmax();
 
-        test = new JTextField();
-
-        this.add(test, BorderLayout.CENTER);
-
-
         this.setBackground(Color.BLACK);
-
 
         this.setBackground(Color.black);
         this.repaint();
@@ -117,12 +108,7 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
         this.revalidate();
 
 
-
     }
-
-
-
-
 
     /** ~~~~~~~~~~~~~ Content Functions ~~~~~~~~~~~~~~~~~~~~**/
 
@@ -139,116 +125,153 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
         value.setMinimum(0);
         value.setSize(new Dimension(100, 10));
         value.addChangeListener(this);
+        this.setMaximumSize(new Dimension(100, 100));
 
+        makeTableLabels();
+
+        this.add(value,BorderLayout.PAGE_END);
+    }
+
+    private void makeTableLabels() {
+        double midPoint = (this.max-this.min)/2;
         Hashtable labelTable = new Hashtable();
-        labelTable.put(0, new JLabel("0.0"));
-        labelTable.put(500, new JLabel("0.5"));
-        labelTable.put(1000, new JLabel("1.0"));
+        labelTable.put(0   , new JLabel(String.valueOf(      min)));
+        labelTable.put(500 , new JLabel(String.valueOf( midPoint)));
+        labelTable.put(1000, new JLabel(String.valueOf(      max)));
         value.setLabelTable(labelTable);
         value.setPaintLabels(true);
-
-        this.add(value);
     }
 
     private void minmax() {
 
-        min = new JTextField("min" + val);
-        min.setSize(new Dimension(20, 20));
-        max = new JTextField("max" + val);
-        max.setSize(new Dimension(20, 20));
-        min.addActionListener(this);
-        max.addActionListener(this);
+        titleValue = new VarTag(title,this.val) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (NumberUtils.isNumber(this.input.getText().trim())) {
+                    valChange();
+                    doubleEmmited(val, actionEvent);
+                }
+                else {
+                    this.input.setText(String.valueOf(val));
+                    this.updateUI();
+                }
+            }
+        };
+        titleValue.setMaximumSize(new Dimension(20,20));
 
 
 
-        this.add(value, BorderLayout.PAGE_END);
-        this.add(min, BorderLayout.LINE_START);
-        this.add(max, BorderLayout.LINE_END);
+        minV = new VarTag("Min: ",this.min) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+                if (NumberUtils.isNumber(this.input.getText().trim())) {
+                    minChange();
+                }
+                else
+                    this.input.setText(String.valueOf(min));
+
+            }
+        };
+        minV.setMaximumSize(new Dimension(20, 20));
+
+
+        maxV = new VarTag("Max: ",this.max) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+                if (NumberUtils.isNumber(this.input.getText().trim())) {
+                   maxChange();
+                    updateUI();
+                }
+                else
+                    this.input.setText(String.valueOf(max));
+                this.updateUI();
+            }
+        };
+
+        maxV.setMaximumSize(new Dimension(20, 20));
+
+        this.add(titleValue, BorderLayout.CENTER);
+        this.add(minV, BorderLayout.LINE_START);
+        this.add(maxV, BorderLayout.LINE_END);
 
 
     }
 
     /** ~~~~~~~~~~~~~ Event Functions ~~~~~~~~~~~~~~~~~~ * */
 
-    public void setTextListener(StringListener textListener) {
-        this.textListener = textListener;
-    }
-    /*
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-            if (e.getSource() == this.min) {
-                String newString = this.min.getText();
-                if (NumberUtils.isNumber(newString)) {
-
-                    minv = NumberUtils.toDouble(newString);
-                }
-
-                min.setText("Min: " + minv);
-            } else if (e.getSource() == this.max) {
-                String newString = this.max.getText();
-                if (NumberUtils.isNumber(newString)) {
-
-                    maxv = NumberUtils.toDouble(newString);
-                }
-                max.setText("Max: " + maxv);
-            }
-        }
-
-        @Override
-        public void stateChanged(ChangeEvent e)
-        {
-
-            JSlider source = (JSlider) e.getSource();
-            if (source != null) sliderChange(source.getValue());
-        }
-
-        */
     @Override
     public void setEnabled ( boolean set) {
 
-        value.setEnabled(set);
-        min.setEnabled(set);
-        max.setEnabled(set);
-
-        test.setEnabled(set);
+        value     .setEnabled(set);
+        minV      .setEnabled(set);
+        maxV      .setEnabled(set);
+        titleValue.setEnabled(set);
     }
 
     /**
      * @return
      */
     public double valueOf(){
-        return value.getValue()+minv;
+        return  this.min + this.value.getValue() * this.di;
     }
 
     @Override
     public void updateUI(){
         super.updateUI();
 
-        if (this.min != null) {
-            String newString = this.min.getText();
-            if (NumberUtils.isNumber(newString)) {
+        if (this.minV != null)
+            minV.input.setText(String.valueOf(min));
 
-                minv = NumberUtils.toDouble(newString);
-            }
 
-            min.setText("Min: " + minv);
+        if (this.maxV != null)
+            maxV.input.setText(String.valueOf(max));
 
-        } else if (this.max!= null) {
-            String newString = this.max.getText();
-            if (NumberUtils.isNumber(newString)) {
+        if (this.titleValue != null)
+            titleValue.input.setText(String.valueOf(val));
+        if (this.value != null )
+            this.makeTableLabels();
 
-                maxv = NumberUtils.toDouble(newString);
-            }
-            max.setText("Max: " + maxv);
-
-        }
+        this.updateDi();
 
     }
-
-
-    public void sliderChange(int input) {
-        System.out.println("\n\nv:" + input +"\tMin :"+minv +"\tMax: "+maxv+ " ::\n");
-        test.setText(" vi = " + input+"\tval :"+(input/100)*maxv+"\n");
+    private double updateDi(){
+        this.di = (this.max-this.min)/1000;
+        return this.di;
     }
+    private void minChange(){
+        this.min = this.minV.getVal();
+    }
+
+    private void maxChange(){
+        this.max = this.maxV.getVal();
+    }
+
+    private void valChange(){
+        val = (this.titleValue.getVal());
+        this.updateUI();
+        int slide = (int)((val - min) / di);
+        value.setValue(slide);
+    }
+
+    public void sliderChange() {
+        int valI = this.value.getValue();
+        this.val = min+ valI*di;
+        this.titleValue.input.setText(String.valueOf(val));
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        this.updateUI();
+        this.doubleEmmited(this.val,e);
+    }
+    @Override
+    public void stateChanged(ChangeEvent e)
+    {
+
+        this.sliderChange();
+        this.updateUI();
+        this.doubleEmmited(this.val, new ActionEvent(this,e.hashCode(),"Command"));
+    }
+
 }
