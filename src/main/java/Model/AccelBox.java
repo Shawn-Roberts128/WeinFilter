@@ -45,16 +45,16 @@ public class AccelBox extends VoltAccel{
     public boolean collision (Particle particle){
         Cord pos = particle.position;
 
-        if (!this.x.contains((float)pos.x))
-            return false;
+        if (!this.x.contains((float)particle.position.x))
+            return true;
 
-        if (!this.y.contains((float)pos.y))
-            return false;
+        if (!this.y.contains((float)particle.position.y))
+            return true;
 
-        if (!this.z.contains((float)pos.z))
-            return false;
+        if (!this.z.contains((float)particle.position.z))
+            return true;
         
-        return true;
+        return false;
     }
 
     @Override

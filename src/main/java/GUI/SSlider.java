@@ -224,12 +224,12 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
         if (this.minV != null)
             minV.input.setText(String.valueOf(min));
 
-
         if (this.maxV != null)
             maxV.input.setText(String.valueOf(max));
 
         if (this.titleValue != null)
             titleValue.input.setText(String.valueOf(val));
+
         if (this.value != null )
             this.makeTableLabels();
 
@@ -271,7 +271,8 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
 
         this.sliderChange();
         this.updateUI();
-        this.doubleEmmited(this.val, new ActionEvent(this,e.hashCode(),"Command"));
+        if (!value.getValueIsAdjusting())
+            this.doubleEmmited(this.val, new ActionEvent(this,e.hashCode(),"Command"));
     }
 
 }

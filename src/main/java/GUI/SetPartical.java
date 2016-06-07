@@ -19,16 +19,14 @@ public abstract class SetPartical extends JPanel implements ActionListener, Doub
     public double mass;
     public double charge;
 
-    private JLabel title   = null;
+    private JLabel title = null;
 
-    public VarTag massIn   = null;
+    public VarTag massIn = null;
     public VarTag chargeIn = null;
 
-    public DoubleListener doubleListener = null;
+    /** test Main * */
 
-    /** test Main **/
-
-    static public void main (String [] ignore){
+    static public void main(String[] ignore) {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -42,20 +40,18 @@ public abstract class SetPartical extends JPanel implements ActionListener, Doub
 
                         this.getContentPane().setBackground(Color.BLUE);
 
-                        this.getContentPane().add(new SetPartical(){
+                        this.getContentPane().add(new SetPartical() {
 
                             @Override
                             public void doubleEmmited(double value, ActionEvent event) {
-                                if (event.getSource() == this.massIn.input){
+                                if (event.getSource() == this.massIn.input) {
                                     this.mass = value;
-                                    System.out.println("Mass :: "+ value);
-                                }
-                                else if (this.chargeIn.input == event.getSource()){
+                                    System.out.println("Mass :: " + value);
+                                } else if (this.chargeIn.input == event.getSource()) {
                                     this.charge = value;
-                                    System.out.println("Charge :: "+ value);
-                                }
-                                else{
-                                    System.out.println(event.toString() +" " +value);
+                                    System.out.println("Charge :: " + value);
+                                } else {
+                                    System.out.println(event.toString() + " " + value);
                                 }
                             }
                         });
@@ -82,25 +78,21 @@ public abstract class SetPartical extends JPanel implements ActionListener, Doub
     }
 
 
-    /** ~~~~~~~~~~~~~~~~~~~ Initialisation and Constructor ~~~~~~~~~~~~~~~~~~~~~ **/
+    /** ~~~~~~~~~~~~~~~~~~~ Initialisation and Constructor ~~~~~~~~~~~~~~~~~~~~~ * */
     public SetPartical() {
-        this((double)0, (double)0);
+        this((double) 1, (double) 1);
     }
-    public SetPartical(double mass, double charge ){
 
-        this.doubleListener = new DoubleListener() {
-            @Override
-            public void doubleEmmited(double value, ActionEvent event) {
-                getDoubleListener().doubleEmmited(value,event);
-            }
-        };
+    public SetPartical(double mass, double charge) {
 
-        this.mass       = mass;
-        this.charge     = charge;
 
-        this.massIn     = null;
-        this.chargeIn   = null;
-        this.title      = null;
+
+        this.mass = mass;
+        this.charge = charge;
+
+        this.massIn = null;
+        this.chargeIn = null;
+        this.title = null;
 
         this.init();
     }
@@ -110,20 +102,20 @@ public abstract class SetPartical extends JPanel implements ActionListener, Doub
 
         this.title = new JLabel("Custom Particle");
 
-        this.add(title,Component.CENTER_ALIGNMENT);
+        this.add(title, Component.CENTER_ALIGNMENT);
 
         this.makeMass();
         this.makeCharge();
     }
 
 
-    /** ~~~~~~~~~~~~~ Content Functions ~~~~~~~~~~~~~~~~~~~~**/
+    /** ~~~~~~~~~~~~~ Content Functions ~~~~~~~~~~~~~~~~~~~~* */
     private void makeCharge() {
-        this.chargeIn = new VarTag("Charge", this.charge){
+        this.chargeIn = new VarTag("Charge", this.charge) {
 
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                doubleListener.doubleEmmited(this.getVal(), actionEvent);
+                doubleEmmited(this.getVal(), actionEvent);
             }
         };
         this.chargeIn.input.addActionListener(this);
@@ -134,31 +126,22 @@ public abstract class SetPartical extends JPanel implements ActionListener, Doub
         this.massIn = new VarTag("Mass", this.mass) {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                doubleListener.doubleEmmited(this.getVal(), actionEvent);
+                doubleEmmited(this.getVal(), actionEvent);
             }
         };
         this.massIn.input.addActionListener(this);
         this.add(this.massIn, Component.CENTER_ALIGNMENT);
     }
 
-    /** ~~~~~~~~~~~~~ Event Functions ~~~~~~~~~~~~~~~~~~ **/
+    /** ~~~~~~~~~~~~~ Event Functions ~~~~~~~~~~~~~~~~~~ * */
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource()==massIn.input)
+        if (e.getSource() == massIn.input)
             this.doubleEmmited(massIn.getVal(), e);
-        else if (e.getSource()==chargeIn.input)
+        else if (e.getSource() == chargeIn.input)
             this.doubleEmmited(chargeIn.getVal(), e);
         else
             System.out.println(e.getSource().toString());
     }
-
-    public DoubleListener getDoubleListener() {
-        return doubleListener;
-    }
-
-    public void setDoubleListener(DoubleListener doubleListener) {
-        this.doubleListener = doubleListener;
-    }
 }
-

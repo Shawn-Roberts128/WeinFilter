@@ -32,8 +32,10 @@ import java.util.LinkedList;
 
     /** Constructor **/
     public Controler(){
-        this.intial = new Particle();
+        this.intial = new Particle(Cord.ZERO(),Cord.ZERO(),Cord.ZERO(),1,1);
         this.stopGap = new Particle();
+        this.stage=new VoltAccel(0d,1d);
+        this.chamber = new WeinFilter(1d,1d);
     }
 
 
@@ -45,18 +47,88 @@ import java.util.LinkedList;
      *
      * @throws Initialised
      */
-    public Coord3d [] run () throws Initialised{
+    public Coord3d [] run () throws Exception {
 
         if (! preAcc) {     // for simple filter
             return runSimple();
-            
+
         }else {             // Cambered filter
-            
+
             return runChamber();
         }
     }
-    
+
+    public HoldData run( int ignore) throws Exception {
+
+        if (!preAcc) {     // for simple filter
+            numSteps = (int) Math.floor(timeEnd / dtime);
+            double[] time = new double[numSteps];
+            for (int i = 0; i < numSteps; ++i) {
+                time[i] = dtime * (double) i;
+            }
+            return new HoldData(time,run(time));
+        } else {             // Cambered filter
+
+            Particle nan = Particle.NaN();
+            double time = 0;
+            LinkedList<Double> timeFrame = new LinkedList<Double>();
+            LinkedList<Particle> traj = new LinkedList<Particle>();
+            Particle next = this.intial;
+            this.stage.setFleck(this.intial);
+
+            // run though accelerator
+            while (!next.equals(nan)) {
+                traj.addFirst(next);
+                time += dtime;
+                timeFrame.addFirst(time);
+                next = stage.instant(time);
+
+                if (((AccelBox) stage).collision(next))
+                    next = Particle.NaN();
+                if (traj.getFirst().equals(next))
+                    throw new Exception("No Particle Movement");
+
+
+            }
+            /** check if it is inside of valid regen **/
+            this.stopGap = traj.getFirst();
+            // get the difference between the hole and the position of the particle in the box
+            Cord pos = traj.get(0).getPosition().add(new Cord(this.centerX, 0, this.centerZ).neg());
+            if (pos.len() < this.radius) {
+
+
+                // compute the Filter set
+                time = 0;
+                chamber.init(this.stopGap);
+                next = chamber.instant(time);
+                while (!next.equals(nan)) {
+                    traj.add(next);
+                    time += dtime;
+                    timeFrame.add(timeFrame.getFirst()+dtime);
+                    next = chamber.instant(time);
+                    if (traj.getFirst().equals(next))
+                        throw new Exception("No Particle Movement");
+                }
+
+            }
+
+            // haft to convert from time lll to array
+            timeFrame.toArray(new Double[timeFrame.size()]);
+            double[] convert = new double[timeFrame.size()];
+            for (int i = 0; i < timeFrame.size(); i++) {
+                convert[i]= timeFrame.get(i);
+            }
+
+            return new HoldData( convert,
+                                traj.toArray(new Particle[traj.size()]));
+
+        }
+    }
+
+
+
     public Coord3d [] runSimple() throws Initialised {
+        numSteps = (int)Math.floor(timeEnd/dtime);
         double[] time = new double[numSteps];
         for (int i = 0 ; i < numSteps; ++i){
             time[i] = dtime *(double)i;
@@ -64,24 +136,28 @@ import java.util.LinkedList;
 
         return toCoords(run(time));
     }
-    public Coord3d[]  runChamber() throws Initialised {
+    public Coord3d[]  runChamber() throws Exception {
         Particle nan = Particle.NaN();
         double time = 0;
         LinkedList <Particle> traj = new LinkedList<Particle>();
-        Particle next  = chamber.instant(time);
+        Particle next  = this.intial;
+        this.stage.setFleck(this.intial);
 
         // run though accelerator
-        while (!next.isequal(nan)) {
+        while (!next.equals(nan)) {
             traj.addFirst(next);
             time += dtime;
             next  = stage.instant(time);
 
             if (((AccelBox)stage).collision(next))
                 next = Particle.NaN();
+            if (traj.getFirst().equals(next))
+                throw new Exception("No Particle Movement");
+
 
         }
         /** check if it is inside of valid regen **/
-
+        this.stopGap = traj.getFirst();
         // get the difference between the hole and the position of the particle in the box
         Cord pos = traj.get(0).getPosition().add(new Cord(this.centerX, 0, this.centerZ).neg());
         if ( pos.len() < this.radius ) {
@@ -91,15 +167,20 @@ import java.util.LinkedList;
             time = 0;
             chamber.init(this.stopGap);
             next = chamber.instant(time);
-            next = ((WeinChamber) chamber).instant(time);
-            while ( !next.isequal(nan)){
+            while ( !next.equals(nan)){
                 traj.add(next);
                 time += dtime;
-                next = ((WeinChamber) chamber).instant(time);
+                next = chamber.instant(time);
+                if (traj.getFirst().equals(next))
+                    throw new Exception("No Particle Movement");
             }
 
         }
-        return toCoords((Particle [])traj.toArray());
+
+
+
+        Particle [] test = traj.toArray( new Particle [traj.size()]);
+        return toCoords(test);
 
     }
 
@@ -118,7 +199,7 @@ import java.util.LinkedList;
 
 
             // check if it use the voltage accelerator or not for the initial stage
-            if (!preAcc) {
+            if (preAcc) {
                 this.stage.setFleck(intial);
                 stage1 = this.stage.trajectory(time);
                 stage1 = prune( stage1);
@@ -164,7 +245,7 @@ import java.util.LinkedList;
 
         Particle nan = Particle.NaN();
         for (int i = 0; i < arr.length;++i){
-            if (! arr[i].isequal(nan)) {
+            if (! arr[i].equals(nan)) {
                 return i;
             }
 
@@ -230,10 +311,12 @@ import java.util.LinkedList;
     public boolean setToRealChamber( double length , double radius){
         if (this.chamber == null){
             this.chamber = new WeinChamber(0d,0d,radius,length);
+            this.preAcc = true;
             return true;
         }
         else if (this.chamber.getClass() == WeinFilter.class) { // Need to witch
             this.chamber = new WeinChamber(this.chamber,radius,length);
+            this.preAcc = true;
             return true;
         }
         else if (this.chamber.getClass() == WeinFilter.class) // no need to switch
@@ -248,15 +331,20 @@ import java.util.LinkedList;
     public boolean setToIdealAcc(){
         if (this.stage == null) {
             this.stage = new VoltAccel(0d, 0d);
+            this.preAcc = false;
             return true;
         }
         else if ( stage.getClass()== AccelBox.class )    // Need to change
         {
             this.stage = new VoltAccel( this.stage);
+            this.preAcc = false;
             return true;
         }
         else if (stage.getClass() == VoltAccel.class)     // no need to change
+        {
+            this.preAcc = false;
             return true;
+        }
         else
             return false;
     }
@@ -345,7 +433,8 @@ import java.util.LinkedList;
     }
 
 
-    public void setAccelBox(double vi) {//TODO add
+    public void setAccelBox(double vi) {
+
         float v= (float)vi;
         ((AccelBox)this.stage).setX(new Range(-v, v));
         ((AccelBox)this.stage).setY(new Range(-v, v));
@@ -358,6 +447,36 @@ import java.util.LinkedList;
 
     public void setChamberLen(double v) {
         ((WeinChamber)this.chamber).setLength( v);
+    }
+
+    public void setMag(double val) {
+        this.chamber.setMagnetic(val);
+    }
+    public void setElectric( double val){
+        this.chamber.setElectric(val);
+    }
+
+    public double getMag(){
+        return this.chamber.getMagnetic();
+    }
+    public double getElectric(){
+        return this.chamber.getElectric();
+    }
+
+    public double getTimeEnd() {
+        return timeEnd;
+    }
+
+    public void setTimeEnd(double timeEnd) {
+        this.timeEnd = timeEnd;
+    }
+
+    public double getDtime() {
+        return dtime;
+    }
+
+    public void setDtime(double dtime) {
+        this.dtime = dtime;
     }
 }
 

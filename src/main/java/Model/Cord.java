@@ -66,6 +66,9 @@ public class Cord {
         this.z = from.z;
     }
 
+    public static Cord ZERO() {
+        return new Cord(0,0,0);
+    }
 
     /** cross preforms a cross product on the arguments like A x B -> A.cross(B)
      *  out = (  A_y*B_z - A_z*B_y  ) _x
@@ -125,12 +128,7 @@ public class Cord {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return new String("("+this.x+", "+this.y+", "+this.z+")");
-    }
-
-    public double getX(double v) {
+    public double getX() {
         return x;
     }
 
@@ -150,7 +148,42 @@ public class Cord {
         return z;
     }
 
-    public void setZ(double z) {
+    public void setZ(double z)
+    {
         this.z = z;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cord)) return false;
+
+        Cord cord = (Cord) o;
+
+        if (Double.compare(cord.x, x) != 0) return false;
+        if (Double.compare(cord.y, y) != 0) return false;
+        if (Double.compare(cord.z, z) != 0) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(z);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return + x +
+                "," + y +
+                "," + z;
     }
 }
