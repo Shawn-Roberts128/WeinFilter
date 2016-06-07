@@ -90,18 +90,44 @@ public class Particle {
 
     @Override
     public String toString() {
-        return super.toString();
+        return this.charge +","
+                +this.mass +","
+                +this.position.toString()+","
+                +this.velocity.toString()+","
+                +this.acceleration.toString();
 
     }
 
-    public boolean isequal(Particle from){
-        if ( this.charge        !=       from.charge        ) return false;
-        if ( this.mass          !=       from.mass          ) return false;
-        if ( !this.acceleration.isequal( from.acceleration) ) return false;
-        if ( !this.velocity    .isequal( from.velocity    ) ) return false;
-        if ( !this.position    .isequal( from.position    ) ) return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Particle)) return false;
+
+        Particle particle = (Particle) o;
+
+        if (Double.compare(particle.charge, charge) != 0) return false;
+        if (Double.compare(particle.mass, mass) != 0) return false;
+        if (!acceleration.equals(particle.acceleration)) return false;
+        if (!position.equals(particle.position)) return false;
+        if (!velocity.equals(particle.velocity)) return false;
+
         return true;
     }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = position.hashCode();
+        result = 31 * result + velocity.hashCode();
+        result = 31 * result + acceleration.hashCode();
+        temp = Double.doubleToLongBits(mass);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(charge);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
     public Coord3d pathCord(){
 
         return new Coord3d(this.position.x, this.position.y,this.position.z);

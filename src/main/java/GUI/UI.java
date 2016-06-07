@@ -6,26 +6,37 @@ package GUI; /**
  */
 
 import Controler.Controler;
+import Controler.HoldData;
 import Model.*;
 
+import com.sun.corba.se.impl.naming.cosnaming.NamingUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jzy3d.maths.Coord3d;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.Arrays;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
+
 
 public class UI extends JFrame {
 
-    private Simulation sim;
-    private SSlider [] position;
-    private SSlider [] velocity;
-    private SetPartical partical;
-    private SSlider [] chamberVars;
+    private Simulation             sim; // simulator object
+    private Controler          control; // controller object to deal with event handling
 
-    private Controler control;
+    private SSlider []        position; // sliders  dealing with position
+    private SSlider []        velocity; // ...      dealing with velocity
+    private SetPartical       partical; // particle information
+    private SSlider []     chamberVars; // ...      dealing with the setup of the chamber
+    private VarTag                 mag; // ...      ... magnetic field
+    private VarTag                elec; // ...      ... electric field
+    private VarTag             timeEnd; // ...      ... how long to simulate for unconstrained system
+    private VarTag               dTime; // ...      ... the time step for any simulation
+
 
     // Main
     public static void main(String[] args) {
@@ -36,7 +47,7 @@ public class UI extends JFrame {
             public void run() {
                 JFrame.setDefaultLookAndFeelDecorated( false );
 
-                UI ex = new UI(" What up ");
+                UI ex = new UI(" Shawn'S Amazing Wien Filter Simulator ");
 
                 ex.getContentPane().setBackground( Color.black );
                 ex.setVisible(true);
@@ -44,7 +55,7 @@ public class UI extends JFrame {
         });
     }
 
-    // The GUI.UI class
+    // The GUI.UI class constructor initialises the UI components and then calls the action setting functions
     public UI(String string) {
         super(string);
         control = new Controler();
@@ -62,35 +73,32 @@ public class UI extends JFrame {
         // initial particle
         makeCustPartical();
 
-        //sim.setTime();
+        // actually setup and display window information
         initUI();
 
     }
 
-    // init the starts imitation of the window
+    // init the starts imitation of the main window
     private void initUI(){
         this.getContentPane().setLayout(new BorderLayout());
         this.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
-
-
+        // setup functions
         setmenuBar();
         addLeftFrame();
         addRightFrame();
         addBotFrame();
 
-
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        // Main window look and feel
         Container c = this.getContentPane();
         c.setBackground( Color.BLACK );
+
         this.getContentPane().setBackground(Color.black);
         this.repaint();
-
         this.setVisible(true);
         this.pack();
         this.revalidate();
-        this.setSize(screenSize.width/2, screenSize.height/2);
+        this.setSize(960, 820);
         this.setLocationRelativeTo(null);
     }
 
@@ -100,6 +108,7 @@ public class UI extends JFrame {
 
 
     private void setmenuBar() {
+
         // add the quit button
         JMenuItem quit = new JMenuItem("Quit");
         quit.setMnemonic(KeyEvent.VK_Q);
@@ -119,26 +128,26 @@ public class UI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Print out file");
-                try {
-                    testRightFrame();
-                } catch (Initialised initialised) {
-                    initialised.printStackTrace();
-                }
-                //TODO add the save file as .txt
+
+                saveFile();
+
+
 
             }
         });
 
-
+        // set the run button
         JMenuItem run = new JMenuItem("Run");
         run.setMnemonic(KeyEvent.VK_R);
         run.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-               run();
+                run();
             }
         });
 
+
+        // adding main menue to the menu bar.
         JMenu menu = new JMenu("Menu");
         menu.setMnemonic(KeyEvent.VK_M);
         menu.add(quit);
@@ -150,12 +159,14 @@ public class UI extends JFrame {
         menuBar.add(run);
         setJMenuBar(menuBar);
 
-
         this.getContentPane().add(menuBar, BorderLayout.PAGE_START);
     }
 
+
     /** ~~~~~~~~~~~~~~~~~~~ Left Frame ~~~~~~~~~~~~~~~~~~~ **/
     private void addLeftFrame() {
+    // loads the left frame and mostly the particle
+
         int row = 10;
         int col = 2;
         JPanel left = new JPanel(new GridLayout(0 , col, 5, 5));
@@ -169,45 +180,49 @@ public class UI extends JFrame {
         // Add Pre-made
         String [] preSet =
                 new String[]{   "Electron",
-                                "Proton",
-                                "Neutron",
-                                "Alpha",
-                                "Beta",
-                                "Gama"};
+                        "Proton",
+                        "Neutron",
+                        "Alpha",
+                        "Beta",
+                        "Gama"};
 
         JComboBox partList = new JComboBox(preSet);
         partList.setSelectedIndex(0);
 
-        //partList.addActionListener(this);
         left.add(partList);
 
+        left.add(mag);
+        left.add(elec);
+
+        JPanel velP= new JPanel(new GridLayout(4,1));
+        JPanel posP= new JPanel(new GridLayout(4,1));
 
         JLabel vel = new JLabel("Initial Velocity");
         JLabel pos = new JLabel("Initial Position");
 
-        left.add(pos);
-        left.add(vel);
+
+        velP.add(vel);
+        posP.add(pos);
+
+        //left.add(pos);
+        //left.add(vel);
 
         // make initial Position
-      for (int i = 0; i < 3; ++i){
+        for (int i = 0; i < 3; ++i){
+            position[i].setMinimumSize(mag.getSize());
+            velocity[i].setMinimumSize(mag.getSize());
+
             left.add(position[i]);
             left.add(velocity[i]);
         }
 
-
+        left.add(posP);
+        left.add(velP);
 
 
     }
 
     private void addRightFrame(){
-
-        JPanel right = new JPanel();
-
-        right.add(sim);
-
-        right.setVisible(true);
-        right.setSize(400, 400);
-        right.setBackground(Color.RED);
         this.getContentPane().add(sim);
 
     }
@@ -257,37 +272,42 @@ public class UI extends JFrame {
         this.revalidate();
     }
 
-    /** top Frame **/
+    /** bottom Frame **/
+    // this deals with adding most of the physical constrains of the filters chambers
     private void addBotFrame(){
+        final int feildLen = 8;
+        chamberVars = new SSlider[feildLen];
+        makeChamberVars();
 
-        JPanel top = new JPanel(new BorderLayout());
-        top.setBackground(Color.RED);
-
-        final JPanel fullFilter = new JPanel(new GridLayout(2,2) );
-
+        JPanel bot = new JPanel(new BorderLayout());
+        bot.setBackground(Color.RED);
 
         JRadioButton simple   = new JRadioButton("Simple Filter");
         JRadioButton ffbutton = new JRadioButton(  "Full Filter");
 
-        final int feildLen = 6;
-        chamberVars = new SSlider[feildLen];
-        makeChamberVars();
+        // Panel to hold the simple buttons and time information
+        JPanel sim = new JPanel(new GridLayout(3,1));
+        sim.add(simple);
+        sim.add(timeEnd);
+        sim.add(dTime);
+        bot.add(sim,BorderLayout.LINE_START);
 
+        final JPanel fullFilter = new JPanel(new GridLayout(4,2) );
         for (int i = 0; i < feildLen ; ++ i )
             fullFilter.add(chamberVars[i],i);
 
+        // group the buttons together
         ButtonGroup filters = new ButtonGroup();
         filters.add(    simple);
         filters.add(  ffbutton);
 
-        top.add(simple    , BorderLayout.LINE_START);
-        top.add(ffbutton  , BorderLayout.    CENTER);
-        top.add(fullFilter, BorderLayout.  LINE_END);
+        // add the buttons to the panel
+        bot.add(ffbutton, BorderLayout.CENTER);
+        bot.add(fullFilter, BorderLayout.LINE_END);
 
-        this.add(top,BorderLayout.PAGE_END);
+        this.add(bot,BorderLayout.PAGE_END);
 
-
-
+        // if the simple button is pressed
         simple.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -303,6 +323,7 @@ public class UI extends JFrame {
             }
         });
 
+        // if the filter button is pressed
         ffbutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -312,50 +333,88 @@ public class UI extends JFrame {
                     chamberVars[i].setEnabled(true);
 
                 control.setToRealChamber(   chamberVars[4].valueOf(), // length
-                                            chamberVars[5].valueOf()  // radius
-                                        );
+                        chamberVars[5].valueOf()  // radius
+                );
 
                 control.setToRealAcc    ((float)   chamberVars[0].valueOf()/2, // box height/2
-                                         (float)   chamberVars[0].valueOf()/2, // box width/2
-                                         (float)   chamberVars[0].valueOf()/2  // box depth/2
-                                        );
+                        (float)   chamberVars[0].valueOf()/2, // box width/2
+                        (float)   chamberVars[0].valueOf()/2  // box depth/2
+                );
 
                 control.updateHole      (   chamberVars[2].valueOf(),
-                                            chamberVars[3].valueOf(),
-                                            chamberVars[1].valueOf()
-                                         );
+                        chamberVars[3].valueOf(),
+                        chamberVars[1].valueOf()
+                );
+
             }
         });
+
+        simple.doClick();// call the function for simple's click
 
     }
 
     /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Action and initialisation of components ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ **/
 
-    public void run(){
-        try{
-           sim.setTime(control.run());
 
-        } catch (Initialised initialised) {
+
+    public void run(){ // runs the model and sends the information to the simulator to be graphed
+        try{
+            sim.setTime(control.run());
+
+        } catch (Initialised initialised) { // if something is not initialised or if there is an error send message
             initialised.printStackTrace();
             JOptionPane.showMessageDialog(this.getContentPane(),"Please enter all Necessary Values");
+        }catch ( Exception e){
+            JOptionPane.showMessageDialog(this.getContentPane(),"An Error Has Occurred,"+e.getMessage()+" \nPlease don't do that...");
         }
     }
 
+    // code for saving a file
+    private void saveFile() {
+        try {
+            // get the data from the model
+            HoldData temp = control.run(1);
+
+            // get save location
+            JFileChooser fc = new JFileChooser();
+            fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            if(JFileChooser.APPROVE_OPTION == fc.showSaveDialog(this)) {
+                FileWriter saveTo = new FileWriter(fc.getSelectedFile());
+
+                // Header of the file output type
+                saveTo.write("time,x,y,z,vx,vy,vz,ax,ay,az\n");
+
+                // output statement
+                for (int i = 0; (i <temp.time.length)&&(i < temp.traj.length);++i ) {
+                    saveTo.append(String.valueOf(temp.time[i])).append(",").append(temp.traj[i].toString()).append("\n");
+                    //System.out.println(temp.time[i]+","+temp.traj[i].toString()+"\n"); // debug statement
+                    if ((i%100) == 0) saveTo.flush();
+                }
+                saveTo.close();
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    // makes the Particle's initial slider values and then gives them the there response's to being dealt with
     private void makeCustPartical(){
 
         partical = new SetPartical() {
 
             @Override
             public void doubleEmmited(double value, ActionEvent event) {
-                if (event.getSource() == this.massIn.input){
+                if (event.getSource() == this.massIn.input){                // mass changed
                     this.mass = value;
                     control.getIntial().setMass(value);
-                    System.out.println("Mass :: " + value);
+                    run();
                 }
-                else if (this.chargeIn.input == event.getSource()){
+                else if (this.chargeIn.input == event.getSource()){         // change changed
                     this.charge = value;
                     control.getIntial().setCharge(value);
-                    System.out.println("Charge :: "+ value);
+                    run();
                 }
                 else{
                     System.out.println(event.toString() +" " +value);
@@ -363,180 +422,186 @@ public class UI extends JFrame {
             }
         };
 
+        this.mag = new VarTag("Magnetic Field", control.getMag()) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (NumberUtils.isNumber(this.input.getText()))
+                    control.setMag(this.getVal());
+                run();
+            }
+        };
+
+        this.elec  = new VarTag("Electric Field",control.getElectric()) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (NumberUtils.isNumber(this.input.getText()))
+                    control.setElectric(this.getVal());
+                run();
+            }
+        };
+
     }
 
     private void makeChamberVars(){
 
-        chamberVars [0]= new SSlider("Box Size") {
+        chamberVars [0]= new SSlider("Box Size",1,10,100) {
             @Override
-            public void stateChanged(ChangeEvent changeEvent) {
-                    this.updateUI();
-                    control.setAccelBox(this.valueOf());
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void doubleEmmited(double value, ActionEvent event) {
                 this.updateUI();
-                control.setAccelBox(this.valueOf());
-
+                control.setAccelBox(this.valueOf()/2);
+                run();
+                sim.box(value,value, value);
             }
         };
-        chamberVars [1]= new SSlider("Radius") {
+
+        chamberVars [1]= new SSlider("Radius",1,1,100) {
             @Override
-            public void stateChanged(ChangeEvent changeEvent) {
+            public void doubleEmmited(double value, ActionEvent event) {
                 this.updateUI();
                 control.setRadius(this.valueOf());
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                this.updateUI();
-                control.setRadius(this.valueOf());
+                run();
             }
         };
-        chamberVars [2]= new SSlider("Chamber Position X") {
+
+        chamberVars [2]= new SSlider("Chamber Position X",0,0,100) {
             @Override
-            public void stateChanged(ChangeEvent changeEvent) {
+            public void doubleEmmited(double value, ActionEvent event) {
+
                 this.updateUI();
                 control.setCenterX(this.valueOf());
+                run();
             }
 
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                this.updateUI();
-                control.setCenterX(this.valueOf());
-            }
         };
-        chamberVars [3]= new SSlider("Chamber Position y") {
+        chamberVars [3]= new SSlider("Chamber Position Z",0,0,100) {
             @Override
-            public void stateChanged(ChangeEvent changeEvent) {
+            public void doubleEmmited(double value, ActionEvent event) {
+
                 this.updateUI();
                 control.setCenterZ(this.valueOf());
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                this.updateUI();
-                control.setCenterZ(this.valueOf());
+                run();
             }
         };
-        chamberVars [4]= new SSlider("Chamber Radius") {
+
+        chamberVars [4]= new SSlider("Chamber Radius",1,1,100) {
             @Override
-            public void stateChanged(ChangeEvent changeEvent) {
+            public void doubleEmmited(double value, ActionEvent event) {
+
                 this.updateUI();
                 control.setChamberRad(this.valueOf());
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                this.updateUI();
-                control.setChamberRad(this.valueOf());
-            }
-        };
-        chamberVars [5]= new SSlider("Chamber Length") {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent) {
-                this.updateUI();
-                control.setChamberLen(this.valueOf());
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                this.updateUI();
-                control.setChamberLen(this.valueOf());
+                run();
             }
         };
 
+        chamberVars [5]= new SSlider("Chamber Length",1,10,100) {
+            @Override
+            public void doubleEmmited(double value, ActionEvent event) {
+                this.updateUI();
+                control.setChamberLen(this.valueOf());
+                run();
+            }
+        };
+
+        chamberVars [6] = new SSlider("Left Plate Voltage",0,-100,100) {
+            @Override
+            public void doubleEmmited(double value, ActionEvent event) {
+                control.getStage().setLeftVolt(value);
+                run();
+            }
+        };
+
+        chamberVars [7] = new SSlider("Right Plate Voltage",0,-100,100) {
+            @Override
+            public void doubleEmmited(double value, ActionEvent event) {
+                control.getStage().setRightVolt(value);
+                run();
+            }
+        };
+
+
+        timeEnd = new VarTag("Time Length",10) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (NumberUtils.isNumber(this.input.getText()));
+                control.setTimeEnd(this.getVal());
+                run();
+            }
+        };
+
+        dTime = new VarTag(" Time Step Size",1) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (NumberUtils.isNumber(this.input.getText()))
+                    control.setDtime(this.getVal());
+                run();
+            }
+        };
     }
 
     private void makePos(){
 
-        position[0]= new SSlider("X_0") {
+        position[0]= new SSlider("X_0",0,control.getIntial().getPosition().getX(),100) {
             @Override
-            public void stateChanged(ChangeEvent changeEvent) {
-                this.updateUI();
-                control.getIntial().getPosition().getX(this.valueOf());
-            }
+            public void doubleEmmited(double value, ActionEvent event) {
 
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
                 this.updateUI();
                 control.getIntial().getPosition().setX(this.valueOf());
+                run();
             }
         };
-        position[1]= new SSlider("Y_0") {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent) {
-                this.updateUI();
-                control.getIntial().getPosition().setY(this.valueOf());
-            }
 
+        position[1]= new SSlider("Y_0",0,0,100) {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void doubleEmmited(double value, ActionEvent event) {
+
                 this.updateUI();
                 control.getIntial().getPosition().setY(this.valueOf());
+                run();
             }
         };
-        position[2]= new SSlider("Z_0") {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent) {
-                this.updateUI();
-                control.getIntial().getPosition().setZ(this.valueOf());
-            }
 
+        position[2]= new SSlider("Z_0",0,0,100) {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void doubleEmmited(double value, ActionEvent event) {
                 this.updateUI();
                 control.getIntial().getPosition().setZ(this.valueOf());
+                run();
             }
         };
     }
 
 
     private void makeVel(){
-         // make initial Velocity
-        velocity[0] = new SSlider("V_x0") {
+        // make initial Velocity
+        velocity[0] = new SSlider("V_x0",0,0,100) {
             @Override
-            public void stateChanged(ChangeEvent changeEvent) {
+            public void doubleEmmited(double value, ActionEvent event) {
                 this.updateUI();
                 control.getIntial().getVelocity().setX(this.valueOf());
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                this.updateUI();
-                control.getIntial().getVelocity().setX(this.valueOf());
+                run();
             }
         };
-        velocity[1] = new SSlider("V_y0") {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent) {
-                this.updateUI();
-                control.getIntial().getVelocity().setY(this.valueOf());
-            }
 
+        velocity[1] = new SSlider("V_y0",0,0,100) {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void doubleEmmited(double value, ActionEvent event) {
+
                 this.updateUI();
                 control.getIntial().getVelocity().setY(this.valueOf());
+                run();
             }
         };
-        velocity[2] = new SSlider("V_z0") {
-            @Override
-            public void stateChanged(ChangeEvent changeEvent) {
-                this.updateUI();
-                control.getIntial().getVelocity().setZ(this.valueOf());
-            }
 
+        velocity[2] = new SSlider("V_z0",0,0,100) {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void doubleEmmited(double value, ActionEvent event) {
+
                 this.updateUI();
                 control.getIntial().getVelocity().setZ(this.valueOf());
+                run();
             }
         };
     }
-
-
 
 }
 

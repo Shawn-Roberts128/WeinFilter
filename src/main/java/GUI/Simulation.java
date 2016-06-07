@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 public class Simulation extends JPanel implements ActionListener{
     private LineStrip time;
     private Chart space;
+    private LineStrip [] box;
 
 
 
@@ -117,6 +118,10 @@ public class Simulation extends JPanel implements ActionListener{
     }
 
     public void box( double hight, double width, double depth){
+       if (box != null)
+           for (LineStrip lineStrip : box) space.removeDrawable(lineStrip);
+        else
+            box = new LineStrip[12];
 
         hight=hight/2;
         width=width/2;
@@ -125,32 +130,29 @@ public class Simulation extends JPanel implements ActionListener{
         Coord3d [] boxPoints = genBoxCords( hight, width, depth);
 
         space.add(new Point(boxPoints[0], org.jzy3d.colors.Color.RED)  ) ;
-        for (int i = 1; i < 9 ; ++ i){
-
-            space.add(new Point(boxPoints[i], org.jzy3d.colors.Color.BLUE)  ) ;
-        }
 
 
 
 
-        addLine( boxPoints[1], boxPoints[2], org.jzy3d.colors.Color.BLUE);
-        addLine( boxPoints[1], boxPoints[3], org.jzy3d.colors.Color.BLUE);
-        addLine( boxPoints[1], boxPoints[5], org.jzy3d.colors.Color.BLUE);
 
-        addLine( boxPoints[2], boxPoints[4], org.jzy3d.colors.Color.BLUE);
-        addLine( boxPoints[2], boxPoints[6], org.jzy3d.colors.Color.BLUE);
+        box[ 0] = addLine( boxPoints[1], boxPoints[2], org.jzy3d.colors.Color.BLUE);
+        box[ 1] = addLine( boxPoints[1], boxPoints[3], org.jzy3d.colors.Color.BLUE);
+        box[ 2] = addLine( boxPoints[1], boxPoints[5], org.jzy3d.colors.Color.BLUE);
 
-        addLine( boxPoints[3], boxPoints[4], org.jzy3d.colors.Color.BLUE);
-        addLine( boxPoints[3], boxPoints[7], org.jzy3d.colors.Color.BLUE);
+        box[ 3] = addLine( boxPoints[2], boxPoints[4], org.jzy3d.colors.Color.BLUE);
+        box[ 4] = addLine( boxPoints[2], boxPoints[6], org.jzy3d.colors.Color.BLUE);
 
-        addLine( boxPoints[4], boxPoints[8], org.jzy3d.colors.Color.BLUE);
+        box[ 5] = addLine( boxPoints[3], boxPoints[4], org.jzy3d.colors.Color.BLUE);
+        box[ 6] = addLine( boxPoints[3], boxPoints[7], org.jzy3d.colors.Color.BLUE);
 
-        addLine( boxPoints[5], boxPoints[6], org.jzy3d.colors.Color.BLUE);
-        addLine( boxPoints[5], boxPoints[7], org.jzy3d.colors.Color.BLUE);
+        box[ 7] = addLine( boxPoints[4], boxPoints[8], org.jzy3d.colors.Color.BLUE);
 
-        addLine( boxPoints[6], boxPoints[8], org.jzy3d.colors.Color.BLUE);
+        box[ 8] = addLine( boxPoints[5], boxPoints[6], org.jzy3d.colors.Color.BLUE);
+        box[ 9] = addLine( boxPoints[5], boxPoints[7], org.jzy3d.colors.Color.BLUE);
 
-        addLine( boxPoints[7], boxPoints[8], org.jzy3d.colors.Color.BLUE);
+        box[10] = addLine( boxPoints[6], boxPoints[8], org.jzy3d.colors.Color.BLUE);
+
+        box[11] = addLine( boxPoints[7], boxPoints[8], org.jzy3d.colors.Color.BLUE);
 
     }
 
@@ -168,10 +170,11 @@ public class Simulation extends JPanel implements ActionListener{
         return boxPoints;
     }
 
-    private void addLine(Coord3d a, Coord3d b, org.jzy3d.colors.Color color){
-
-        space.add(new LineStrip(new Point(a, color),
-                new Point(b, color)));
+    private LineStrip addLine(Coord3d a, Coord3d b, org.jzy3d.colors.Color color){
+        LineStrip temp = new LineStrip(new Point(a, color),
+                new Point(b, color));
+        space.add(temp);
+        return temp;
     }
 
     /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Other Functions ~~~~~~~~~~~~~~~~~~~~~~~~ **/
