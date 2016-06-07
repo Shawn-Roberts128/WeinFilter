@@ -24,7 +24,7 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
     private JTextField min;
     private JTextField max;
 
-    private JTextArea test;
+    private JTextField test;
 
     String val;
     private double minv;
@@ -102,7 +102,7 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
 
         minmax();
 
-        test = new JTextArea();
+        test = new JTextField();
 
         this.add(test, BorderLayout.CENTER);
 
@@ -218,7 +218,7 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
      * @return
      */
     public double valueOf(){
-        return (value.getValue()+minv);
+        return value.getValue()+minv;
     }
 
     @Override
@@ -233,6 +233,7 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
             }
 
             min.setText("Min: " + minv);
+
         } else if (this.max!= null) {
             String newString = this.max.getText();
             if (NumberUtils.isNumber(newString)) {
@@ -240,6 +241,7 @@ public abstract class SSlider extends JPanel implements ChangeListener, ActionLi
                 maxv = NumberUtils.toDouble(newString);
             }
             max.setText("Max: " + maxv);
+
         }
 
     }
