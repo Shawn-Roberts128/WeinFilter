@@ -14,11 +14,25 @@
       <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-solaris-i586.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-windows-amd64.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-windows-i586.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-main-2.0-rc11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-android-armv6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-linux-amd64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-linux-armv6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-linux-armv6hf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-linux-i586.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-macosx-universal.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-solaris-amd64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-solaris-i586.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-windows-amd64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-2.0-rc11-natives-windows-i586.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$PROJECT_DIR$/lib/jocl-main-2.0-rc11-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jocl-main-2.0-rc11-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/jocl-main-2.0-rc11-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jocl-main-2.0-rc11-sources.jar!/" />
     </SOURCES>
   </library>
